@@ -21,11 +21,25 @@ def main() -> None:
 
 @app.command()
 def scrape(
-    source: str = typer.Option("wellfound", "--source", "-s", help="Job board source."),
-    limit: int = typer.Option(50, "--limit", "-n", help="Max postings to scrape."),
+    source: str = typer.Option("huggingface", "--source", "-s", help="Job board source."),
+    limit: int | None = typer.Option(None, "--limit", "-n", help="Max postings to scrape."),
 ) -> None:
-    """Scrape job postings from a source (weekend)."""
-    raise NotImplementedError("scrape: implemented weekend with Wellfound scraper")
+    """Scrape job postings from a source into the database."""
+    from jmi.db.base import get_session
+    from jmi.sources.huggingface import HuggingFaceScraper
+    from jmi.storage.jobs import JobPostingRepository
+
+    if source != "huggingface":
+        typer.echo(f"Source '{source}' not implemented yet.", err=True)
+        raise typer.Exit(1)
+
+    scraper = HuggingFaceScraper()
+    with get_session() as session:
+        repo = JobPostingRepository(session)
+        stats = scraper.run(repo, limit=limit)
+    typer.echo(
+        f"{stats.inserted} new, {stats.skipped} existing, {stats.invalid} invalid"
+    )
 
 
 @app.command()
