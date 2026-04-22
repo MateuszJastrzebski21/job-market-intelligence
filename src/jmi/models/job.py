@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 
-Source = Literal["wellfound"]
+Source = Literal["huggingface", "wellfound"]
 Seniority = Literal["junior", "mid", "senior", "staff", "principal", "lead"]
 RemotePolicy = Literal["remote", "hybrid", "onsite"]
 EmploymentType = Literal["full_time", "contract", "part_time", "internship"]
