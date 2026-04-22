@@ -7,6 +7,7 @@ import anthropic
 import structlog
 from pydantic import ValidationError
 
+from jmi.config import get_settings
 from jmi.extractors.prompt import build_system_prompt, format_user_message
 from jmi.extractors.schema import JobExtractSchema
 from jmi.models.job import JobExtract, JobPosting
@@ -43,7 +44,15 @@ class AnthropicExtractor:
         model: str = DEFAULT_MODEL,
         max_tokens: int = DEFAULT_MAX_TOKENS,
     ) -> None:
-        self._client = client or anthropic.Anthropic()
+        if client is None:
+            api_key = get_settings().anthropic_api_key
+            if not api_key:
+                raise RuntimeError(
+                    "ANTHROPIC_API_KEY is not set. Add it to .env "
+                    "(copy from .env.example) before running `jmi extract`."
+                )
+            client = anthropic.Anthropic(api_key=api_key)
+        self._client = client
         self.model = model
         self._max_tokens = max_tokens
         self._system_prompt = build_system_prompt()
