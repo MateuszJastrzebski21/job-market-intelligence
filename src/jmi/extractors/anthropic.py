@@ -92,7 +92,10 @@ class AnthropicExtractor:
             years_experience_min=parsed.years_experience_min,
             employment_type=parsed.employment_type,
             model_name=self.model,
-            raw_llm_response=response.model_dump(mode="json"),
+            # warnings="none": SDK 0.96 wraps content blocks in ParsedTextBlock[TypeVar]
+            # subclasses which aren't in the static content Union — the dump is correct,
+            # the warnings are noise.
+            raw_llm_response=response.model_dump(mode="json", warnings="none"),
             extracted_at=datetime.now(tz=UTC),
         )
 

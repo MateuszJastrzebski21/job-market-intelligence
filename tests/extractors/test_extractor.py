@@ -65,7 +65,7 @@ def _make_response(
         },
     }
     response = SimpleNamespace(parsed_output=schema_instance)
-    response.model_dump = lambda mode="python": raw
+    response.model_dump = lambda **_kwargs: raw
     return response
 
 
