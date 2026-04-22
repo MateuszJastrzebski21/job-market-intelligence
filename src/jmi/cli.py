@@ -66,9 +66,11 @@ def extract(
     )
     typer.echo(
         f"cache: {stats.cached_hits}/{stats.inserted} hits | "
-        f"tokens: {stats.total_input_tokens} in "
-        f"({stats.total_cache_read_tokens} cached), "
-        f"{stats.total_output_tokens} out"
+        f"written {stats.total_cache_creation_tokens} / "
+        f"read {stats.total_cache_read_tokens} tokens"
+    )
+    typer.echo(
+        f"tokens: {stats.total_input_tokens} input, {stats.total_output_tokens} output"
     )
 
 
