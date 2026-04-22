@@ -34,4 +34,8 @@ def extract(
 @app.command("init-db")
 def init_db() -> None:
     """Create tables (temporary until Alembic lands in Week 2)."""
-    raise NotImplementedError("init-db: implemented in Step 3 once ORM exists")
+    from jmi.db import models  # noqa: F401  — register ORM models on Base.metadata
+    from jmi.db.base import Base, engine
+
+    Base.metadata.create_all(bind=engine)
+    typer.echo("Tables created.")
