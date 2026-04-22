@@ -144,6 +144,12 @@ ENV/
 env.bak/
 venv.bak/
 
+# Claude Code local settings
+.claude/
+
+# Local data dumps (scraped HTML, etc.)
+/data/
+
 # Spyder project settings
 .spyderproject
 .spyproject
