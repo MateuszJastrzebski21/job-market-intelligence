@@ -2,16 +2,21 @@ from __future__ import annotations
 
 import typer
 
+from jmi.config import get_settings
+from jmi.logging import configure_logging
+
 app = typer.Typer(
     name="jmi",
-    help="Job Market Intelligence — scrape, extract, analyze job postings.",
+    help="Job Market Intelligence - scrape, extract, analyze job postings.",
     no_args_is_help=True,
 )
 
 
 @app.callback()
 def main() -> None:
-    """Top-level callback. Logging setup wired in Step 4."""
+    """Configure logging once per process using env-driven settings."""
+    settings = get_settings()
+    configure_logging(json=settings.log_json, level=settings.log_level)
 
 
 @app.command()
