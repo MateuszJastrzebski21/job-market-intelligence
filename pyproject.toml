@@ -1,0 +1,56 @@
+[project]
+name = "jmi"
+version = "0.1.0"
+description = "Job Market Intelligence — scrape, extract, and analyze job postings."
+readme = "README.md"
+authors = [
+    { name = "Mateusz Jastrzebski", email = "mateusz.jas21@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pgvector>=0.4.2",
+    "psycopg[binary]>=3",
+    "pydantic>=2",
+    "pydantic-settings>=2.14.0",
+    "sqlalchemy>=2",
+    "structlog>=25.5.0",
+    "typer>=0.24.1",
+]
+
+[project.scripts]
+jmi = "jmi.cli:app"
+
+[build-system]
+requires = ["uv_build>=0.8.23,<0.9.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.20.2",
+    "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.15.11",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "B",
+    "UP",
+    "SIM",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = false
