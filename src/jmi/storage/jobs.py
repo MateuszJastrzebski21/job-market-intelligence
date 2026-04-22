@@ -75,6 +75,16 @@ class JobExtractRepository:
         )
         return [_extract_to_domain(o) for o in self._session.execute(stmt).scalars()]
 
+    def get_by_posting_and_model(
+        self, posting_id: UUID, model_name: str
+    ) -> JobExtract | None:
+        stmt = select(JobExtractORM).where(
+            JobExtractORM.job_posting_id == posting_id,
+            JobExtractORM.model_name == model_name,
+        )
+        orm = self._session.execute(stmt).scalar_one_or_none()
+        return _extract_to_domain(orm) if orm else None
+
 
 def _posting_to_orm(p: JobPosting) -> JobPostingORM:
     return JobPostingORM(

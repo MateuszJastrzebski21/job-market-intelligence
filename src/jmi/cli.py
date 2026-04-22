@@ -44,10 +44,32 @@ def scrape(
 
 @app.command()
 def extract(
-    limit: int = typer.Option(50, "--limit", "-n", help="Max postings to extract."),
+    limit: int | None = typer.Option(None, "--limit", "-n", help="Max postings to extract."),
+    model: str = typer.Option(
+        "claude-opus-4-7", "--model", "-m", help="Anthropic model ID."
+    ),
 ) -> None:
-    """Run LLM extraction on un-extracted postings (weekend)."""
-    raise NotImplementedError("extract: implemented weekend with Anthropic SDK")
+    """Run LLM extraction on postings without an extract for the given model."""
+    from jmi.db.base import get_session
+    from jmi.extractors import AnthropicExtractor
+    from jmi.storage.jobs import JobExtractRepository, JobPostingRepository
+
+    extractor = AnthropicExtractor(model=model)
+    with get_session() as session:
+        posting_repo = JobPostingRepository(session)
+        extract_repo = JobExtractRepository(session)
+        stats = extractor.run(posting_repo, extract_repo, limit=limit)
+
+    typer.echo(
+        f"{stats.inserted} extracted, {stats.skipped} already done, "
+        f"{stats.invalid} invalid, {stats.failed_api_calls} api_failures"
+    )
+    typer.echo(
+        f"cache: {stats.cached_hits}/{stats.inserted} hits | "
+        f"tokens: {stats.total_input_tokens} in "
+        f"({stats.total_cache_read_tokens} cached), "
+        f"{stats.total_output_tokens} out"
+    )
 
 
 @app.command("init-db")

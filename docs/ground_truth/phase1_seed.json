@@ -1,0 +1,65 @@
+[
+  {
+    "id": "hf-0CE9E806CC",
+    "source": "huggingface",
+    "posting": {
+      "title": "Cloud Machine Learning Engineer - EMEA remote",
+      "company": "Hugging Face",
+      "location": "Paris, France",
+      "description_text": "About the Role\nWe are looking for a Cloud Machine Learning engineer responsible to help build machine learning solutions used by millions leveraging cloud technologies. You will work on integrating Hugging Face's open-source libraries like Transformers and Diffusers, with major cloud platforms or managed SaaS solutions.\nResponsibilities\nBridging and integrating transformers/diffusers models with a different Cloud provider.\nEnsuring the above models meet the expected performance.\nDesigning & Developing easy-to-use, secure, and robust Developer Experiences & APIs for our users.\nWrite technical documentation, examples and notebooks to demonstrate new features.\nSharing & Advocating your work and the results with the community.\nAbout You\nDeep experience building with Hugging Face Technologies, including Transformers, Diffusers, Accelerate, PEFT, Datasets.\nExpertise in Deep Learning Framework, preferably PyTorch, optionally XLA understanding.\nStrong knowledge of cloud platforms like AWS and services like Amazon SageMaker, EC2, S3, CloudWatch and/or Azure and GCP equivalents.\nExperience in building MLOps pipelines for containerizing models and solutions with Docker.\nFamiliarity with Typescript, Rust, and MongoDB, Kubernetes are helpful.\nAbility to write clear documentation, examples and definition and work across the full product development lifecycle.\nBonus: Experience with Svelte & TailwindCSS."
+    },
+    "expected": {
+      "seniority": "mid",
+      "tech_stack": ["Python", "PyTorch", "Transformers", "Diffusers", "AWS", "Amazon SageMaker", "Docker", "Kubernetes"],
+      "salary_min": null,
+      "salary_max": null,
+      "salary_currency": null,
+      "remote_policy": "remote",
+      "years_experience_min": null,
+      "employment_type": "full_time"
+    },
+    "notes": "Title says 'Engineer' (no seniority adjective); Workable experience tag is 'Associate' which maps to mid-level. Description doesn't mandate years of experience but emphasizes 'deep experience' with HF ecosystem. No salary. 'EMEA remote' + posted-location Paris = remote. Core stack is PyTorch+HF libraries+AWS; Kubernetes/Docker listed as 'helpful' so included. Python implied by 'ML Engineer' + HF libraries."
+  },
+  {
+    "id": "hf-922D2C6549",
+    "source": "huggingface",
+    "posting": {
+      "title": "Cloud ML DevRel Engineer - EMEA remote",
+      "company": "Hugging Face",
+      "location": "Paris, France",
+      "description_text": "About the Role\nAs a Cloud ML DevRel Engineer your goal will be to grow the impact of the Hugging Face ML Cloud team by educating the community of ML practitioners on how they can benefit by accelerating their training and inference workloads.\nThe Hugging Face ML Cloud team is working through strategic collaborations with the most used Clouds (AWS, GCP, Azure, Cloudflare), AI Accelerators (incl. NVIDIA, AMD, Intel, Gaudi, Inferentia, TPU), and Systems (Dell, Nutanix), to make it easy for the community to use Hugging Face models and libraries on these compute platforms.\nThis is a solid engineering role with a flavor of education and community. Your impact will be driving visibility and usage of integrations with strategic partners, through activities including:\nPublishing technical blog posts.\nContributing documentation and code examples.\nSpeaking to business and technical audiences at partner conferences.\nParticipating in, or producing webinars.\nBuilding and evangelizing demos.\nLeading GTM conversations with strategic partners.\nAbout You\nYou are passionate about ML Engineering, building practical AI applications, putting them in production, and accelerating them to the best of the Cloud ability.\nYou are a great communicator and educator, comfortable with public speaking to technical audiences.\nYou like to move fast with high autonomy and experiment with new ways to ship things. You are exposed to cloud ML ecosystem.\nExisting engagement in social platforms (GitHub, LinkedIn, Twitter, Reddit, etc) or other communication/education channels is expected. Having experience in Open Source development will be helpful."
+    },
+    "expected": {
+      "seniority": "senior",
+      "tech_stack": ["Python", "PyTorch", "AWS", "GCP", "Azure", "Cloudflare", "NVIDIA CUDA"],
+      "salary_min": null,
+      "salary_max": null,
+      "salary_currency": null,
+      "remote_policy": "remote",
+      "years_experience_min": null,
+      "employment_type": "full_time"
+    },
+    "notes": "Workable experience tag 'Mid-Senior level' + DevRel/partner-conference speaking responsibilities → senior. Tech stack inferred from cloud partners listed (AWS/GCP/Azure/Cloudflare) and accelerators (NVIDIA CUDA implicit from GPU work); Python+PyTorch implicit from ML Engineer context. No explicit years requirement. 'EMEA remote' = remote."
+  },
+  {
+    "id": "hf-E787796A71",
+    "source": "huggingface",
+    "posting": {
+      "title": "Open-Source Machine Learning Engineer, AI for Robotics - Paris Office",
+      "company": "Hugging Face",
+      "location": "Paris, France",
+      "description_text": "About the Role\nWe are seeking a versatile and passionate Open-Source Machine Learning Engineer to join our team in Paris. You will play a crucial role in developing, integrating, and maintaining the core library, focusing on making state-of-the-art AI for Robotics accessible to the community.\nYour main missions:\nML Model Integration & Scaling: Porting, integrating, and scaling PyTorch ML models for robotics applications, including managing pretraining and large-scale training workflows.\nCore Library Development: Refactoring, managing, and improving the core library's API, architecture, and infrastructure to ensure it is robust, scalable, and easy to use.\nFeature Development & Exploration: Driving the development and shipment of robust new features, and actively exploring and integrating new technologies relevant to AI and Robotics.\nCommunity Engagement & Maintenance: Actively managing and merging community Pull Requests (PRs), handling reported issues, and acting as a technical liaison for the community.\nInfrastructure & Benchmarking: Implementing and maintaining integrations with platforms like the Hugging Face Hub, performing benchmarking & profiling to ensure performance, and managing library dependencies.\nAbout you\nGraduated from an MS or PhD Degree in Computer Science, Machine Learning or a related field.\nA solid Machine Learning experience: Hands-on experience with PyTorch and developing abstractions for efficient ML development and deployment.\nML Literature & Systems: Up-to-date knowledge of the robot learning literature and experience in integrating ML models into larger systems.\nStrong Software Skills: Exceptional coding skills (e.g., Python) with experience in building and managing complex, production-quality libraries.\nSoftware Design & Maintenance: Proven ability to manage a library's technical lifecycle, including refactoring, maintaining API stability, and dependencies management.\nBonus points: Any previous experience contributing to open source libraries in the robotics fields and especially on LeRobot."
+    },
+    "expected": {
+      "seniority": "mid",
+      "tech_stack": ["Python", "PyTorch", "Git"],
+      "salary_min": null,
+      "salary_max": null,
+      "salary_currency": null,
+      "remote_policy": "onsite",
+      "years_experience_min": null,
+      "employment_type": "full_time"
+    },
+    "notes": "No explicit seniority tag; 'solid ML experience' + MS/PhD + production library maintenance → mid (not junior, not senior — no 'lead' or 'principal' signal, no direct reports). Title says 'Paris Office' and Workable telecommuting=false → onsite. Tech stack explicit: PyTorch, Python; Git inferred from 'managing community PRs'. No salary, no years stated."
+  }
+]
