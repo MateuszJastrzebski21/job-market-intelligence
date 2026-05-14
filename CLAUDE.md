@@ -34,7 +34,7 @@ Koniec sesji dzisiejszej: `docker compose up` działa,
 - Postgres 15 + pgvector (single DB for data + embeddings)
 - Docker Compose for local Postgres
 - Typer for CLI (Phase 1-2)
-- FastAPI added in Phase 2 (Week 5+) when dashboard needs endpoints
+- FastAPI: Phase 1 since Week 2 for the ingest endpoint (ADR-0009); dashboard endpoints still in Phase 2
 - Sync first, async only when measured bottleneck
 
 
