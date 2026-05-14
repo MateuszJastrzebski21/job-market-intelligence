@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>JMI Job Saver</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <h1>JMI Job Saver</h1>
+      <span class="version">v0.1.0</span>
+    </header>
+
+    <section class="row">
+      <span class="label">JMI status:</span>
+      <span id="status" class="pill pill-unknown">checking…</span>
+    </section>
+
+    <section class="row">
+      <span class="label">Last save:</span>
+      <span id="last-save">none yet</span>
+    </section>
+
+    <button
+      id="save-btn"
+      disabled
+      title="Portal-specific content scripts land in PR5 (JJIT) / PR7 (NFJ). PR4 ships the skeleton only."
+    >
+      Save jobs on this page
+    </button>
+
+    <details id="errors-section">
+      <summary>Recent errors (<span id="errors-count">0</span>)</summary>
+      <ul id="errors-list"></ul>
+      <button
+        id="retry-btn"
+        disabled
+        title="Retry handler ships in PR6 alongside the detail fetcher."
+      >
+        Retry failed details
+      </button>
+    </details>
+
+    <footer>
+      <a href="#" id="open-options">Settings</a>
+    </footer>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
