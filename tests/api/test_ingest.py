@@ -30,6 +30,7 @@ def test_inserts_new_posting_with_null_description(
     assert out["accepted"] == 1
     assert out["skipped_existing"] == 0
     assert out["invalid"] == []
+    assert out["accepted_indices"] == [0]
 
     stored = in_memory_repo.get_by_source("jjit", "jjit-1")
     assert stored is not None
@@ -37,6 +38,26 @@ def test_inserts_new_posting_with_null_description(
     assert stored.description_text is None
     assert stored.raw_payload["foo"] == "bar"
     assert stored.raw_payload["salary_raw"] == "16000-24000 PLN"
+
+
+def test_accepted_indices_excludes_skipped_existing(
+    client: TestClient, auth_headers: dict[str, str]
+) -> None:
+    """accepted_indices lists only the freshly inserted indices, not skipped ones."""
+    # Pre-insert one posting
+    seed_body = {"source": "jjit", "postings": [_posting_in("jjit-existing")]}
+    client.post("/api/ingest", json=seed_body, headers=auth_headers)
+
+    # Submit a batch where index 0 is the existing one and index 1 is new
+    batch_body = {
+        "source": "jjit",
+        "postings": [_posting_in("jjit-existing"), _posting_in("jjit-fresh")],
+    }
+    response = client.post("/api/ingest", json=batch_body, headers=auth_headers)
+    out = response.json()
+    assert out["accepted"] == 1
+    assert out["skipped_existing"] == 1
+    assert out["accepted_indices"] == [1]  # only the fresh one
 
 
 def test_skips_existing_posting(

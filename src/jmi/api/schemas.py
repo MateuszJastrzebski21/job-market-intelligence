@@ -39,6 +39,11 @@ class IngestBatchOut(BaseModel):
     accepted: int
     skipped_existing: int
     invalid: list[InvalidEntry] = Field(default_factory=list)
+    # Indices (in the request `postings` array) that were freshly inserted on
+    # this call. Used by the extension SW to know which URLs to forward to
+    # INGEST_DETAILS; skipped_existing rows aren't included since their
+    # details were filled by a prior run.
+    accepted_indices: list[int] = Field(default_factory=list)
 
 
 class DetailIn(BaseModel):

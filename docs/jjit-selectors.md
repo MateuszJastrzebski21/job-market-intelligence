@@ -73,4 +73,79 @@ There is no built-in "load more" button — virtualized scroll is the only loadi
 
 - **Primary failure mode**: JJIT redesigns the card layout. The `#up-offers-list` ID and `class="offer-card"` are the only "intentional" anchors; if either disappears, the parser returns `cardCount=0` with a diagnostic error.
 - **Secondary failure mode**: positional `<p>` / `<span>` order changes (e.g. company moved after city). Detection: parsed company name doesn't look like a company. Mitigation: re-inspect with the verification commands above and update positional indices.
-- **Test coverage**: `extension/__tests__/jjit-listing.test.js` runs against synthetic fixtures shaped like the real DOM. Tests don't catch JJIT-side changes — they catch our own parser regressions. Real-world breakage is detected by the user noticing 0 saved jobs after a click.
+- **Test coverage**: `extension/tests/jjit-listing.test.js` runs against synthetic fixtures shaped like the real DOM. Tests don't catch JJIT-side changes — they catch our own parser regressions. Real-world breakage is detected by the user noticing 0 saved jobs after a click.
+
+---
+
+# JJIT Detail Page — DOM Selectors
+
+**Source URL pattern:** `https://justjoin.it/job-offer/{slug}` where `{slug}` matches the `source_id` recorded by the listing parser. The detail page is fully **server-side rendered** — `fetch(url, {credentials: "include"})` from the extension SW returns the complete HTML (~700-800 KB) with the description content embedded. No SPA hydration step is required, no `__NEXT_DATA__` JSON payload to scrape.
+
+**Last verified:** 2026-05-14 (PR6, via Claude in Chrome MCP DOM probe + raw `fetch()` byte-count check).
+
+## Description extraction strategy
+
+JJIT does **not** wrap the description in a Quill `.ql-editor` container, despite using Quill's output classes (`p.editor-paragraph`). The description content lives as the next sibling of an `<h3>` section heading.
+
+```js
+const SECTION_HEADINGS = ["Job description", "Opis stanowiska"];
+const h3 = Array.from(doc.querySelectorAll("h3"))
+  .find(h => SECTION_HEADINGS.includes(h.textContent.trim()));
+const description = h3?.nextElementSibling;
+// description.innerHTML  →  description_html
+// blockWalk(description) →  description_text
+```
+
+| Field | Strategy |
+|---|---|
+| Section heading | `<h3>` with text in `{"Job description", "Opis stanowiska"}` (JJIT serves either depending on locale headers) |
+| Description container | `heading.nextElementSibling` (a `<div>`) |
+| `description_html` | `container.innerHTML` (preserves `<p class="editor-paragraph">`, `<strong>`, `<ul>/<li>`, etc.) |
+| `description_text` | Block-aware walk — plain `.textContent` collapses paragraphs into one run-on string (verified: "Cloud Data Architect📍 Polska 100% zdalnieO projekcie..."), unusable for the LLM extractor |
+
+## Block walker rules (`extension/lib/parsers/jjit-detail.js` `extractText`)
+
+| Element | Output |
+|---|---|
+| `<p>`, `<div>`, `<h1..h6>`, `<ul>`, `<ol>`, `<blockquote>`, `<pre>`, `<section>`, `<article>` | `\n` before + `\n` after |
+| `<li>` | `\n- ` then walk children inline |
+| `<br>` | `\n` |
+| `<strong>`, `<em>`, `<a>`, other inline | text content only, no break |
+| Text node | text content as-is |
+
+Post-processing: strip trailing whitespace before `\n`, collapse runs of 3+ `\n` into `\n\n`, trim final result.
+
+## Verification commands (paste into DevTools Console on a `/job-offer/{slug}` page)
+
+```js
+// 1. Check fetch() returns SSR HTML (description present in raw response)
+fetch(location.href, { credentials: "include" })
+  .then(r => r.text())
+  .then(t => console.log({
+    bytes: t.length,
+    hasJobDescription: t.includes("Job description"),
+    hasOProjekcie: t.includes("O projekcie"),
+  }));
+// → expect { bytes: ~700_000, hasJobDescription: true, ... }
+
+// 2. Verify the heading + sibling pattern lands the right content
+const h3 = [...document.querySelectorAll("h3")]
+  .find(h => /^Job description$/i.test(h.textContent.trim()));
+console.log({
+  found: !!h3,
+  siblingTextLen: h3?.nextElementSibling?.textContent?.trim().length,
+});
+// → expect { found: true, siblingTextLen: 1500-4000 }
+```
+
+## Bilingual UI
+
+JJIT serves either English or Polish UI labels depending on `Accept-Language` header. Both heading variants are matched by the parser. Polish variant `"Opis stanowiska"` is kept up-to-date alongside the English one — DO NOT remove the bilingual fallback even if the English path "always seems to work" in dev.
+
+## Test coverage
+
+`extension/tests/jjit-detail.test.js` runs against two synthetic fixtures:
+- `jjit-detail-sample.html` — English heading, Polish description body with `ą ć ę ł ó ż` chars + bullet list. Verifies UTF-8 round-trip + bullet formatting + section-skip (the parser must skip an earlier `<h3>Tech stack</h3>` section).
+- `jjit-detail-pl.html` — Polish heading "Opis stanowiska". Verifies bilingual fallback.
+
+Same caveat as the listing parser: tests catch our regressions, not JJIT-side changes. Re-validate via the verification commands every 4-6 weeks.
