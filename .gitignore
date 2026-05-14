@@ -16,6 +16,10 @@ eggs/
 .eggs/
 lib/
 lib64/
+# extension/lib/ holds Chrome-extension JavaScript and is NOT a Python venv —
+# unignore it explicitly so the generic `lib/` rule above doesn't sweep it up.
+!extension/lib/
+!extension/lib/**
 parts/
 sdist/
 var/
