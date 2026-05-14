@@ -149,3 +149,58 @@ JJIT serves either English or Polish UI labels depending on `Accept-Language` he
 - `jjit-detail-pl.html` — Polish heading "Opis stanowiska". Verifies bilingual fallback.
 
 Same caveat as the listing parser: tests catch our regressions, not JJIT-side changes. Re-validate via the verification commands every 4-6 weeks.
+
+---
+
+# Listing URL patterns
+
+**Last verified:** 2026-05-15 (popup URL-detection fix, after PR6 manual smoke surfaced that the popup was disabling the Save button on filtered listings).
+
+The popup's "Save jobs on this page" button enables only on URLs that match a known listing pattern. JJIT serves the listing under multiple URL shapes depending on user-applied filters; ALL of them render the same `#up-offers-list` container, so all of them are valid Save targets.
+
+## Patterns the matcher accepts (`isJJITListingUrl`)
+
+| URL | Why it matches |
+|---|---|
+| `https://justjoin.it/` | Root listing (no filter) |
+| `https://justjoin.it/?with-salary=yes&experience-level=junior` | Root + query-string filters |
+| `https://justjoin.it/job-offers/all-locations/ai` | Category filter under all-locations |
+| `https://justjoin.it/job-offers/warszawa` | Location filter (city) |
+| `https://justjoin.it/job-offers/krakow/python` | Location + category combo |
+| `https://justjoin.it/job-offers/` | `/job-offers/` with trailing slash |
+
+## Patterns deliberately excluded
+
+| URL | Why it's excluded |
+|---|---|
+| `https://justjoin.it/job-offer/{slug}` | Singular `job-offer` = detail page (not a listing) |
+| `https://justjoin.it/regulamin` | Static legal page |
+| `https://justjoin.it/admin/` | Unrelated path |
+| `https://justjoin.it/job-offers` (no trailing slash) | JJIT consistently serves the trailing-slash variant; the bare form is treated as not-a-listing to avoid ambiguity |
+
+## Implementation
+
+`extension/lib/url-matchers.js` exports `isJJITListingUrl(urlStr)`. It uses the URL parsing API (rather than a literal regex) so the logic reads naturally and edge cases like `null` / non-string input fail closed:
+
+```js
+export function isJJITListingUrl(urlStr) {
+  try {
+    const u = new URL(urlStr);
+    if (u.hostname !== "justjoin.it") return false;
+    return u.pathname === "/" || u.pathname.startsWith("/job-offers/");
+  } catch {
+    return false;
+  }
+}
+```
+
+## Test coverage
+
+`extension/tests/url-matchers.test.js` covers all 7 positive patterns + 7 negative patterns + invalid-input safety. Run via `cd extension && npx vitest run`.
+
+## When to revise
+
+Re-check this section if:
+- JJIT introduces a new listing path (e.g. `/explore/`)
+- A previously-listing path gets repurposed (saved jobs need re-evaluation)
+- The popup starts mis-classifying URLs (user reports Save button disabled on a real listing)
