@@ -35,6 +35,7 @@ def ingest(
     accepted = 0
     skipped_existing = 0
     invalid: list[InvalidEntry] = []
+    accepted_indices: list[int] = []
     now = datetime.now(tz=UTC)
 
     for idx, item in enumerate(batch.postings):
@@ -67,6 +68,7 @@ def ingest(
             )
             repo.add(posting)
             accepted += 1
+            accepted_indices.append(idx)
         except ValidationError as exc:
             log.warning(
                 "ingest.skip.invalid",
@@ -97,4 +99,5 @@ def ingest(
         accepted=accepted,
         skipped_existing=skipped_existing,
         invalid=invalid,
+        accepted_indices=accepted_indices,
     )

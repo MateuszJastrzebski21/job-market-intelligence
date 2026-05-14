@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8" /></head>
+  <body>
+    <!--
+      Offscreen document — provides the SW with a Document/DOMParser context.
+      Loads parsers as classic scripts so they can register themselves on the
+      global scope, then offscreen.js wires the chrome.runtime.onMessage
+      handler that dispatches PARSE_DETAIL to the right parser.
+    -->
+    <script src="../lib/parsers/jjit-detail.js"></script>
+    <script src="offscreen.js"></script>
+  </body>
+</html>
