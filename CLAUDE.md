@@ -38,18 +38,26 @@ Koniec sesji dzisiejszej: `docker compose up` działa,
 - Sync first, async only when measured bottleneck
 
 
-## Phase 1 portal order (decided Week 1)
+## Phase 1 portal order (updated Week 2 — see ADR-0008)
 
-1. HuggingFace Jobs — Week 1 (easiest technically, API-friendly, AI-specific)
-2. JustJoinIT — Week 2 (main target for job hunt, SPA + anti-bot)
-3. NoFluffJobs — Week 3 (Polish market coverage, dedup test vs JJIT)
-4. Wellfound OR YC Work at a Startup — Week 4 (one of them, pick based on 
-   junior-friendly volume analysis done in Week 3)
+1. HuggingFace Jobs — Week 1 (easiest technically, API-friendly, AI-specific) — DONE
+2. NoFluffJobs — Week 2 (Polish market coverage; promoted from Week 3 after 
+   JJIT pivot)
+3. Wellfound OR YC Work at a Startup — Week 3 (one of them, pick based on 
+   junior-friendly volume analysis done in Week 2 retro)
+4. The other of Wellfound / YC, or Bulldogjob — Week 4
 
+JustJoinIT: OFF the table (regulamin 11.3 prohibits automated extraction; 
+robots.txt Disallow /api/; see docs/adr/0008-jjit-removed-from-phase-1.md).
 LinkedIn: OFF the table (ToS + anti-bot, not worth).
 Otta: OFF the table (EU scale-ups, junior roles rare).
 
-Rationale: Week 1 prioritizes technical safety (HF Jobs is safe first scraper 
-to learn the framework). Week 2 switches to JJIT which is the actual job hunt 
-target portal despite being harder technically - by then BaseScraper + 
-repository + extractor are done, only scraping SPA is the new problem.
+Rationale: Week 1 prioritized technical safety (HF Jobs as a low-risk first 
+scraper to learn the framework). Week 2 was originally JJIT (the actual job 
+hunt target despite the SPA + anti-bot challenge), but ToS diligence in the 
+Week 2 plan-mode session surfaced an explicit prohibition on automated data 
+extraction in regulamin 11.3, backed by the 2001 Polish Database Protection 
+Act. NFJ — already on the roadmap for Week 3 — moves up to fill the slot. 
+The architectural patterns researched for JJIT (Alembic migration, separated 
+3-step pipeline, multi-company mapper, Quill-aware HTML parser) port to NFJ; 
+see docs/_archived/jjit-plan-abandoned.md.
