@@ -218,3 +218,7 @@ __marimo__/
 
 # Local DB backups (do not commit)
 backup-*.sql
+
+# Node tooling for the extension/ vitest test harness (PR5+)
+extension/node_modules/
+extension/coverage/
