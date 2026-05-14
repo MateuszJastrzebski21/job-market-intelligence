@@ -11,6 +11,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
+        populate_by_name=True,
     )
 
     database_url: str = Field(
@@ -20,6 +21,7 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
     log_json: bool = Field(default=False, alias="LOG_JSON")
     anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
+    ingest_token: str | None = Field(default=None, alias="JMI_INGEST_TOKEN")
 
 
 def get_settings() -> Settings:

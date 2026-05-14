@@ -235,6 +235,30 @@ def test_system_prompt_includes_cache_control() -> None:
     assert len(system_block["text"]) > 10000  # system prompt is substantial
 
 
+def test_run_skips_postings_with_empty_description() -> None:
+    """Postings with description_text=None (typical for HITL-ingested rows
+    awaiting detail fetch) are skipped before any Anthropic call."""
+    p_empty = JobPosting(
+        source="huggingface",
+        source_job_id="empty-desc-001",
+        url="https://example.test/jobs/001",
+        title="Listing-only row",
+        company_name="Acme",
+        scraped_at=datetime.now(tz=UTC),
+    )
+    parsed = JobExtractSchema(seniority="senior")
+    client = _FakeClient(lambda _k: _make_response(parsed))
+    extractor = AnthropicExtractor(client=client, model="claude-opus-4-7")  # type: ignore[arg-type]
+
+    stats = extractor.run(
+        _InMemoryPostingRepo([p_empty]), _InMemoryExtractRepo()
+    )  # type: ignore[arg-type]
+
+    assert stats.skipped == 1
+    assert stats.inserted == 0
+    assert client.messages.calls == []
+
+
 def test_stats_accumulate_tokens_and_cache_hits() -> None:
     p1, p2 = _make_posting("w-1"), _make_posting("w-2")
     parsed = JobExtractSchema(seniority="mid")

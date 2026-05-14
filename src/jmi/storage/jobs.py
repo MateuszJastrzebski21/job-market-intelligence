@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import select
@@ -40,6 +41,45 @@ class JobPostingRepository:
             .order_by(JobPostingORM.scraped_at.desc())
             .limit(limit)
             .offset(offset)
+        )
+        return [_posting_to_domain(o) for o in self._session.execute(stmt).scalars()]
+
+    def update_description(
+        self,
+        posting_id: UUID,
+        description_html: str,
+        description_text: str,
+        raw_payload: dict[str, Any],
+    ) -> None:
+        """In-place UPDATE of description_* + raw_payload on an existing row.
+
+        Preserves the UUID so any FK references in job_extracts stay valid.
+        Raises KeyError if no row matches posting_id.
+        """
+        orm = self._session.get(JobPostingORM, posting_id)
+        if orm is None:
+            raise KeyError(posting_id)
+        orm.description_html = description_html
+        orm.description_text = description_text
+        orm.raw_payload = raw_payload
+        self._session.flush()
+
+    def list_pending_details(
+        self, source: str, limit: int = 100
+    ) -> list[JobPosting]:
+        """Postings for a given source that still need a detail-fetch.
+
+        Ordered FIFO by scraped_at so the oldest listing-scrape backlog drains
+        first. Excludes rows whose description_text is non-NULL (already filled).
+        """
+        stmt = (
+            select(JobPostingORM)
+            .where(
+                JobPostingORM.source == source,
+                JobPostingORM.description_text.is_(None),
+            )
+            .order_by(JobPostingORM.scraped_at.asc())
+            .limit(limit)
         )
         return [_posting_to_domain(o) for o in self._session.execute(stmt).scalars()]
 
