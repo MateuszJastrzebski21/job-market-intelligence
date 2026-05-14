@@ -1,26 +1,42 @@
-# Next session — JJIT scraper plan mode
+# Next session — NoFluffJobs scraper plan mode
 
 ## Status
-- Mac env działa (smoke test passed 14 May 2026)
-- HF scraper + Opus extractor stabilne, cache hits potwierdzone
-- Week 2 task: JJIT scraper plan mode
+- ADR-0008 merged: JJIT out of Phase 1
+- NFJ promoted to Week 2 (was Week 3)
+- HF scraper + Opus extractor stable
+- Week 1 retro committed (partial)
 
-## Plan jutro
-1. Chrome → https://justjoin.it → F12 (DevTools)
-2. Network tab → filter Fetch/XHR → wpisz "offers" w Filter
-3. Reload, znajdź request z listą ofert (response > kilkadziesiąt kB, nie tracker reklamowy)
-4. Copy as cURL → wklej w rozmowie z Claude Desktop Project
-5. Wracam do JJIT plan-mode prompt (sprawdź ostatnie wiadomości z Claude)
-6. Review planu Claude Code → akceptacja → potem kod
+## Plan jutro (lub następna sesja)
+
+### Step 1 - DevTools research na NFJ (ja, 15 min)
+1. Otwórz https://nofluffjobs.com
+2. F12 → Network tab → filter "offers" albo "postings" 
+3. Reload, znajdź XHR/Fetch który ma response z listą ofert (kilkadziesiąt kB, nie tracker)
+4. Copy as cURL → wklej do rozmowy z Claude Desktop
+5. **ZANIM** Claude Code: sprawdź NFJ robots.txt i ToS!
+   - https://nofluffjobs.com/robots.txt
+   - Footer NFJ → szukaj "Regulamin" / "Terms"
+   - Search po: scrap*, automatyzacj*, bot, robot, API, pobieranie
+   - Jeśli zabronione → szukamy następnego (Wellfound? YC?)
+
+### Step 2 - Plan mode z Claude Code (po pozytywnym ToS check)
+Prompt podobny do JJIT plan-mode ale z NFJ data + reuse architectural decisions z archived JJIT plan:
+- Alembic-first PR
+- Separated 3-step pipeline (scrape → fetch-details → extract) jeśli NFJ ma split endpoint  
+- Multi-company refactor (już zaplanowany)
+- HTML parser (już zaprojektowany)
+- Structured data Option A (raw_payload only)
 
 ## Decyzje już podjęte
-- Portal order: HF ✓ → JJIT (next) → NFJ → Wellfound/YC
-- LinkedIn: out
-- Faza 4: human-in-the-loop, nie auto-submit
+- Portal order: HF ✓ → NFJ (next) → Wellfound/YC → ...
+- LinkedIn out
+- JJIT out (ADR-0008)
+- Otta out
+- Auto-apply human-in-the-loop, nie auto-submit
 - Custom RAG od zera, potem LangChain comparison
-- BaseScraper dopiero po 3 konkretach (rule of three, czyli po NFJ)
 
 ## Heads up
-- JJIT to multi-company (różnica od HF single-company)
-- ToS check przed scrapowaniem
-- Plan mode obowiązkowy, nie skacz do kodu
+- ToS check **przed** kodem, nie po. JJIT lesson learned.
+- 80% planu JJIT reuse w NFJ — patrz docs/_archived/jjit-plan-abandoned.md
+- BaseScraper dopiero po 3 konkretach (rule of three)
+- Cloud environment skonfiguruj **wieczorem na implementację** (nie dzień planowania)
