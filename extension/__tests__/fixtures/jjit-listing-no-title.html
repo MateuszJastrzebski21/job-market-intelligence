@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<body>
+<!--
+  Defensive fixture: 2 cards but the second has NO <h3> (simulates a promo
+  tile, ad placeholder, or a JJIT layout reshuffle). Parser should skip the
+  second card with a console.warn and produce 1 valid posting + cardCount=2.
+-->
+<div id="up-offers-list">
+  <ul class="MuiStack-root">
+    <li data-index="0" class="MuiBox-root">
+      <a class="offer-card" href="/job-offer/acmecorp-valid-card-warsaw-python">
+        <div><p>Acme Corp</p></div>
+        <h3>Valid Card</h3>
+        <div><p>Warsaw</p></div>
+        <div><p>Remote</p><p>Remote</p></div>
+        <div>
+          <span>10 000 - 15 000</span>
+          <span>PLN/month</span>
+        </div>
+        <div>
+          <div>Python</div>
+          <div>Django</div>
+        </div>
+        <div>
+          <span>Mid</span>
+          <span>Permanent</span>
+        </div>
+      </a>
+    </li>
+    <li data-index="1" class="MuiBox-root">
+      <a class="offer-card" href="/job-offer/promo-tile-no-title">
+        <div><p>Promo Sponsor</p></div>
+        <div><p>Promotional placeholder, intentionally without h3</p></div>
+      </a>
+    </li>
+  </ul>
+</div>
+</body>
+</html>

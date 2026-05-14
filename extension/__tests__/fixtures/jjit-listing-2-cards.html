@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<body>
+<!--
+  Synthetic JJIT listing fixture for vitest unit tests.
+  Mirrors the real DOM shape captured 2026-05-14 (see docs/jjit-selectors.md):
+    - Container: <div id="up-offers-list">
+    - Each card: <a class="offer-card" href="/job-offer/{slug}">
+    - Inside card: <h3> title, <p>s for company/city/workplace, <span>s for
+      salary range/unit + seniority/working time (each rendered twice for
+      visible + screen-reader a11y), and a row of leaf <div>s for tech tags.
+  Company names + slugs anonymized to avoid distributing real listings.
+-->
+<div id="up-offers-list">
+  <ul class="MuiStack-root mui-ghx1dh">
+    <li data-index="0" class="MuiBox-root mui-9i0j0r">
+      <div class="MuiBox-root mui-bzvnq5">
+        <div class="MuiBox-root mui-11of274">
+          <a class="offer-card" href="/job-offer/acmecorp-python-backend-developer-warsaw-python">
+            <div class="MuiBox-root mui-164xuat"><p>Acme Corp</p></div>
+            <h3>Python Backend Developer</h3>
+            <div class="MuiBox-root mui-1id2txn"><p>Warsaw</p></div>
+            <div class="MuiBox-root mui-1id2txn"><p>Hybrid</p><p>Hybrid</p></div>
+            <div class="MuiBox-root mui-salary-row">
+              <span>15 000 - 25 000</span>
+              <span>PLN/month</span>
+            </div>
+            <div class="MuiBox-root mui-tech-row">
+              <div class="MuiBox-root">Python</div>
+              <div class="MuiBox-root">FastAPI</div>
+              <div class="MuiBox-root">PostgreSQL</div>
+            </div>
+            <div class="MuiBox-root mui-meta">
+              <span>Senior</span>
+              <span>Senior</span>
+              <span></span>
+              <span>Permanent</span>
+              <span>Permanent</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </li>
+    <li data-index="1" class="MuiBox-root mui-9i0j0r">
+      <div class="MuiBox-root mui-bzvnq5">
+        <div class="MuiBox-root mui-11of274">
+          <a class="offer-card" href="/job-offer/synthetic-inc-junior-data-engineer-remote-data">
+            <div class="MuiBox-root mui-164xuat"><p>Synthetic Inc</p></div>
+            <h3>Junior Data Engineer</h3>
+            <div class="MuiBox-root mui-1id2txn"><p>Krakow, +2 Locations</p></div>
+            <div class="MuiBox-root mui-1id2txn"><p>Remote</p><p>Remote</p></div>
+            <div class="MuiBox-root mui-tech-row">
+              <div class="MuiBox-root">SQL</div>
+              <div class="MuiBox-root">Python</div>
+            </div>
+            <div class="MuiBox-root mui-meta">
+              <span>Junior</span>
+              <span>Junior</span>
+              <span>B2B</span>
+              <span>B2B</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+</body>
+</html>

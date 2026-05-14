@@ -1,0 +1,14 @@
+{
+  "name": "jmi-extension",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vitest test harness for the JMI Job Saver extension parsers. The extension itself is loaded as unpacked Chrome MV3 — these dev deps exist solely for unit-testing the parsers under jsdom.",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0",
+    "jsdom": "^25.0.0"
+  }
+}
