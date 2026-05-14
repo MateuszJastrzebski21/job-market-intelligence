@@ -88,3 +88,23 @@ def init_db() -> None:
     cfg.set_main_option("sqlalchemy.url", get_settings().database_url)
     command.upgrade(cfg, "head")
     typer.echo("Database upgraded to alembic head.")
+
+
+@app.command()
+def serve(
+    host: str = typer.Option("127.0.0.1", "--host", help="Bind host."),
+    port: int = typer.Option(8000, "--port", help="Bind port."),
+    reload: bool = typer.Option(
+        False, "--reload", help="Reload on code changes (dev only)."
+    ),
+) -> None:
+    """Start the FastAPI ingest endpoint server."""
+    import uvicorn
+
+    uvicorn.run(
+        "jmi.api.app:create_app",
+        host=host,
+        port=port,
+        reload=reload,
+        factory=True,
+    )

@@ -11,6 +11,7 @@ dependencies = [
     "alembic>=1.18.4",
     "anthropic>=0.50",
     "beautifulsoup4>=4.14.3",
+    "fastapi>=0.136.1",
     "httpx>=0.28.1",
     "pgvector>=0.4.2",
     "psycopg[binary]>=3",
@@ -20,6 +21,7 @@ dependencies = [
     "structlog>=25.5.0",
     "tenacity>=9.1.4",
     "typer>=0.24.1",
+    "uvicorn[standard]>=0.46.0",
 ]
 
 [project.scripts]

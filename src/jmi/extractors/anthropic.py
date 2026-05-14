@@ -110,6 +110,15 @@ class AnthropicExtractor:
         postings = posting_repo.list(limit=limit or 1000)
 
         for posting in postings:
+            if not posting.description_text:
+                log.info(
+                    "extract.skip.no_description",
+                    source=posting.source,
+                    posting_id=str(posting.id),
+                )
+                stats.skipped += 1
+                continue
+
             existing = extract_repo.get_by_posting_and_model(posting.id, self.model)
             if existing is not None:
                 stats.skipped += 1
