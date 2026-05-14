@@ -24,8 +24,8 @@ class JobPosting(BaseModel):
     title: str
     company_name: str
     location_raw: str | None = None
-    description_html: str
-    description_text: str
+    description_html: str | None = None
+    description_text: str | None = None
     posted_at: datetime | None = None
     scraped_at: datetime
     raw_payload: dict[str, Any] = Field(default_factory=dict)

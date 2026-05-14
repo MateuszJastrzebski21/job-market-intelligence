@@ -76,9 +76,15 @@ def extract(
 
 @app.command("init-db")
 def init_db() -> None:
-    """Create tables (temporary until Alembic lands in Week 2)."""
-    from jmi.db import models  # noqa: F401  — register ORM models on Base.metadata
-    from jmi.db.base import Base, engine
+    """Upgrade the database schema to the latest Alembic head."""
+    from pathlib import Path
 
-    Base.metadata.create_all(bind=engine)
-    typer.echo("Tables created.")
+    from alembic import command
+    from alembic.config import Config
+
+    migrations_dir = Path(__file__).parent / "db" / "migrations"
+    cfg = Config()
+    cfg.set_main_option("script_location", str(migrations_dir))
+    cfg.set_main_option("sqlalchemy.url", get_settings().database_url)
+    command.upgrade(cfg, "head")
+    typer.echo("Database upgraded to alembic head.")
