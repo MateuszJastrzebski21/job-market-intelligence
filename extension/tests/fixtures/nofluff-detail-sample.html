@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pl">
+<body>
+<!--
+  Synthetic NoFluffJobs detail-page fixture. Mirrors the structure captured via
+  Claude in Chrome MCP on 2026-05-15 (see docs/nofluff-selectors.md):
+    - All content sections nest under a single <common-posting-content-wrapper>
+    - Sections with stable, locale-independent ids: #posting-description,
+      #posting-tasks, #posting-nice-to-have, #posting-specs
+    - Two id-less <section>s reached via their <h2> heading text:
+      "Obowiązkowe" (must-have) and "Opis wymagań" (requirements)
+    - Polish characters appear in the description body
+  #posting-specs is intentionally present but NOT part of description_text.
+  Company name + slug anonymized.
+-->
+<main>
+  <h1>Cloud Data Architect</h1>
+  <a data-cy="JobOffer_CompanyProfile" href="/pl/company/acme-corp-12345">Acme Corp</a>
+  <h4>15 000 – 20 000 PLN</h4>
+
+  <div class="col-lg-8 mobile-no-padding">
+    <common-posting-content-wrapper>
+      <div class="mb-20">
+        <section id="posting-description">
+          <h2>Opis oferty</h2>
+          <common-posting-translate-section></common-posting-translate-section>
+          <p><span>Dołączysz do projektu z sektora energetycznego.</span></p>
+          <p><span>Praca 100% zdalnie — Zdalnie z całej Polski (Warszawa, Kraków).</span></p>
+          <p><span>Cenimy dbałość o jakość: ąćęłóż.</span></p>
+        </section>
+      </div>
+      <div class="mb-20">
+        <section id="posting-tasks">
+          <h2>Zakres obowiązków</h2>
+          <ul>
+            <li>Projektowanie architektury danych w środowiskach chmurowych</li>
+            <li>Budowanie procesów ETL/ELT</li>
+          </ul>
+        </section>
+      </div>
+      <div class="mb-20">
+        <section>
+          <h2>Obowiązkowe</h2>
+          <p>Python, SQL, język angielski na poziomie B2.</p>
+        </section>
+      </div>
+      <div class="mb-20">
+        <section>
+          <h2>Opis wymagań</h2>
+          <p>Minimum trzy lata doświadczenia w inżynierii danych.</p>
+        </section>
+      </div>
+      <div class="mb-20">
+        <section id="posting-nice-to-have">
+          <h2>Mile widziane</h2>
+          <p>Znajomość Power BI oraz IoT.</p>
+        </section>
+      </div>
+      <div class="mb-20">
+        <section id="posting-specs">
+          <h2>Szczegóły oferty</h2>
+          <p>Tryb rekrutacji: zdalny. Start: ASAP.</p>
+        </section>
+      </div>
+    </common-posting-content-wrapper>
+  </div>
+</main>
+</body>
+</html>
