@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import typer
 
 from jmi.config import get_settings
@@ -9,6 +11,12 @@ app = typer.Typer(
     name="jmi",
     help="Job Market Intelligence - scrape, extract, analyze job postings.",
     no_args_is_help=True,
+)
+
+_SEED_OPTION = typer.Option(
+    Path("docs/ground_truth/phase1_seed.json"),
+    "--seed",
+    help="Ground-truth seed JSON file.",
 )
 
 
@@ -74,11 +82,43 @@ def extract(
     )
 
 
+@app.command()
+def evaluate(
+    seed: Path = _SEED_OPTION,
+    source: str | None = typer.Option(
+        None, "--source", "-s", help="Restrict evaluation to one source."
+    ),
+    output: str = typer.Option(
+        "text", "--output", "-o", help="Output format: text or json."
+    ),
+    show_unmatched: bool = typer.Option(
+        False, "--show-unmatched", help="List labels that could not be evaluated."
+    ),
+) -> None:
+    """Evaluate LLM extraction quality against ground-truth labels."""
+    from jmi.db.base import get_session
+    from jmi.evaluation.report import format_report, format_report_json
+    from jmi.evaluation.runner import evaluate_all, load_seed
+    from jmi.storage.jobs import JobExtractRepository, JobPostingRepository
+
+    seed_entries = load_seed(seed)
+    with get_session() as session:
+        report = evaluate_all(
+            seed_entries,
+            JobPostingRepository(session),
+            JobExtractRepository(session),
+            source_filter=source,
+        )
+
+    if output == "json":
+        typer.echo(format_report_json(report))
+    else:
+        typer.echo(format_report(report, show_unmatched=show_unmatched))
+
+
 @app.command("init-db")
 def init_db() -> None:
     """Upgrade the database schema to the latest Alembic head."""
-    from pathlib import Path
-
     from alembic import command
     from alembic.config import Config
 
