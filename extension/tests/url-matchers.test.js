@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 
-const { isJJITListingUrl, isJJITUrl } = await import("../lib/url-matchers.js");
+const { isJJITListingUrl, isJJITUrl, isNFJListingUrl, isNFJUrl } = await import(
+  "../lib/url-matchers.js"
+);
 
 describe("isJJITListingUrl", () => {
   describe("matches listing pages", () => {
@@ -56,5 +58,61 @@ describe("isJJITUrl", () => {
     ["garbage", "not-a-url"],
   ])("%s → false", (_label, url) => {
     expect(isJJITUrl(url)).toBe(false);
+  });
+});
+
+describe("isNFJListingUrl", () => {
+  describe("matches listing pages", () => {
+    it.each([
+      ["root (redirects to /pl)", "https://nofluffjobs.com/"],
+      ["PL curated landing", "https://nofluffjobs.com/pl"],
+      ["PL landing trailing slash", "https://nofluffjobs.com/pl/"],
+      ["PL category job board", "https://nofluffjobs.com/pl/backend"],
+      ["EN curated landing", "https://nofluffjobs.com/en"],
+      ["EN category job board", "https://nofluffjobs.com/en/devops"],
+      ["PL category + query filter", "https://nofluffjobs.com/pl/backend?criteria=seniority%3Djunior"],
+      ["/pl/jobs (NFJ redirects to /pl, URL still matches)", "https://nofluffjobs.com/pl/jobs"],
+    ])("%s → true", (_label, url) => {
+      expect(isNFJListingUrl(url)).toBe(true);
+    });
+  });
+
+  describe("excludes non-listing pages", () => {
+    it.each([
+      ["PL detail page", "https://nofluffjobs.com/pl/job/some-slug-here"],
+      ["EN detail page", "https://nofluffjobs.com/en/job/some-slug"],
+      ["PL company profile", "https://nofluffjobs.com/pl/company/foo"],
+      ["EN company profile", "https://nofluffjobs.com/en/company/acme-12345"],
+      ["different host (JJIT)", "https://justjoin.it/"],
+      ["non-https scheme", "http://nofluffjobs.com/pl"],
+    ])("%s → false", (_label, url) => {
+      expect(isNFJListingUrl(url)).toBe(false);
+    });
+
+    it("invalid URL string → false (no throw)", () => {
+      expect(isNFJListingUrl("not a url")).toBe(false);
+      expect(isNFJListingUrl("")).toBe(false);
+      expect(isNFJListingUrl(null)).toBe(false);
+      expect(isNFJListingUrl(undefined)).toBe(false);
+    });
+  });
+});
+
+describe("isNFJUrl", () => {
+  it.each([
+    ["landing", "https://nofluffjobs.com/pl"],
+    ["detail page", "https://nofluffjobs.com/pl/job/abc"],
+    ["company profile", "https://nofluffjobs.com/pl/company/foo"],
+  ])("%s → true (matches NFJ host)", (_label, url) => {
+    expect(isNFJUrl(url)).toBe(true);
+  });
+
+  it.each([
+    ["different host", "https://justjoin.it/"],
+    ["non-https", "http://nofluffjobs.com/"],
+    ["empty", ""],
+    ["garbage", "not-a-url"],
+  ])("%s → false", (_label, url) => {
+    expect(isNFJUrl(url)).toBe(false);
   });
 });

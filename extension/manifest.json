@@ -40,6 +40,11 @@
       "matches": ["https://justjoin.it/*"],
       "js": ["lib/parsers/jjit-listing.js", "content-scripts/jjit.js"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://nofluffjobs.com/*"],
+      "js": ["lib/parsers/nofluff-listing.js", "content-scripts/nofluff.js"],
+      "run_at": "document_idle"
     }
   ]
 }

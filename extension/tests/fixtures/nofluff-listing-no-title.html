@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pl">
+<body>
+<!--
+  Synthetic NoFluffJobs listing fixture: one valid card + one card missing its
+  title element. The parser must skip the title-less card (console.warn) and
+  keep the valid one — never crash the batch.
+-->
+<nfj-postings-list data-cy="nfjPostingsList">
+  <div class="list-container">
+    <a nfj-postings-item id="nfjPostingListItem-VALID001"
+       href="/pl/job/valid-card-acme-corp-warszawa">
+      <h3 data-cy="title position on the job offer listing" class="posting-title__position">Valid Card</h3>
+      <h4 class="company-name">Acme Corp</h4>
+      <nfj-posting-item-city data-cy="location on the job offer listing">Warszawa</nfj-posting-item-city>
+    </a>
+    <a nfj-postings-item id="nfjPostingListItem-NOTITLE99"
+       href="/pl/job/promo-tile-acme-corp">
+      <h4 class="company-name">Acme Corp</h4>
+      <nfj-posting-item-city data-cy="location on the job offer listing">Warszawa</nfj-posting-item-city>
+    </a>
+  </div>
+</nfj-postings-list>
+</body>
+</html>
