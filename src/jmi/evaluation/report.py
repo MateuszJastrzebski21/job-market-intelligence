@@ -125,8 +125,8 @@ class EvaluationReport:
 
 _UNMATCHED_HINTS = {
     "id_only": "add source_job_id to the label to enable eval",
-    "no_posting": "no posting in DB for this source_job_id — run `jmi scrape`",
-    "no_extract": "posting exists but has no extract — run `jmi extract`",
+    "no_posting": "no posting in DB for this source_job_id - run `jmi scrape`",
+    "no_extract": "posting exists but has no extract - run `jmi extract`",
 }
 
 
@@ -149,7 +149,7 @@ def format_report(report: EvaluationReport, *, show_unmatched: bool = False) -> 
 
     if report.status == "no_labels":
         lines.append("")
-        lines.append("No ground-truth labels found — nothing to evaluate.")
+        lines.append("No ground-truth labels found - nothing to evaluate.")
         return "\n".join(lines)
 
     lines.append(f"Total labels: {report.total_labels}")
@@ -232,10 +232,11 @@ def format_report(report: EvaluationReport, *, show_unmatched: bool = False) -> 
                 f"{sb.evaluable} evaluable ({sb.unmatched} unmatched)"
             )
             sen = sb.boolean_accuracy.get("seniority")
+            ts_avg = sb.tech_stack_jaccard_avg
+            ts_str = "N/A" if ts_avg is None else f"{ts_avg:.2f}"
             lines.append(
                 f"    seniority: {_pct(sen)}, "
-                f"tech_stack jaccard: "
-                f"{'N/A' if sb.tech_stack_jaccard_avg is None else f'{sb.tech_stack_jaccard_avg:.2f}'}, "
+                f"tech_stack jaccard: {ts_str}, "
                 f"salary_min recall: {_pct(sb.salary_min_recall)}"
             )
 
