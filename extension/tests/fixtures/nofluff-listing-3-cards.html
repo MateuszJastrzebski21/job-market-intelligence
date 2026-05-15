@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pl">
+<body>
+<!--
+  Synthetic NoFluffJobs listing fixture for vitest unit tests.
+  Mirrors the real DOM shape captured 2026-05-15 (see docs/nofluff-selectors.md):
+    - List section: <nfj-postings-list data-cy="nfjPostingsList">
+    - Card: <a nfj-postings-item id="nfjPostingListItem-{ID}" href="/pl/job/{slug}">
+    - Inside card: data-cy attributes for title / salary / category / location,
+      plus <h4 class="company-name">.
+  Cards spread across MORE THAN ONE <nfj-postings-list> section (NFJ appends a
+  new section per "Pokaż kolejne oferty" click).
+  Card 1: full card. Card 2: no salary, no tech tags. Card 3: multi-location
+  ("Zdalnie +1" with popover). Company names / salaries / slugs anonymized.
+-->
+<nfj-postings-list data-cy="nfjPostingsList">
+  <div class="list-container">
+    <a nfj-postings-item id="nfjPostingListItem-XOEYPPK5"
+       href="/pl/job/python-backend-developer-acme-corp-warszawa">
+      <h3 data-cy="title position on the job offer listing" class="posting-title__position">Python Backend Developer</h3>
+      <h4 class="company-name">Acme Corp</h4>
+      <span data-cy="salary ranges on the job offer listing" class="posting-tag">15 000 – 20 000 PLN</span>
+      <span data-cy="category name on the job offer listing" class="posting-tag">Python</span>
+      <span data-cy="category name on the job offer listing" class="posting-tag">FastAPI</span>
+      <span data-cy="category name on the job offer listing" class="posting-tag">PostgreSQL</span>
+      <nfj-posting-item-city data-cy="location on the job offer listing">Warszawa</nfj-posting-item-city>
+    </a>
+    <a nfj-postings-item id="nfjPostingListItem-ABCD1234"
+       href="/pl/job/junior-data-analyst-acme-corp-krakow">
+      <h3 data-cy="title position on the job offer listing" class="posting-title__position">Junior Data Analyst — naleźć ćwierć</h3>
+      <h4 class="company-name">Acme Corp</h4>
+      <nfj-posting-item-city data-cy="location on the job offer listing">Kraków</nfj-posting-item-city>
+    </a>
+  </div>
+</nfj-postings-list>
+<nfj-postings-list data-cy="nfjPostingsList">
+  <div class="list-container">
+    <a nfj-postings-item id="nfjPostingListItem-MULTI777"
+       href="/pl/job/devops-engineer-acme-corp-remote">
+      <h3 data-cy="title position on the job offer listing" class="posting-title__position">DevOps Engineer</h3>
+      <h4 class="company-name">Acme Corp</h4>
+      <span data-cy="salary ranges on the job offer listing" class="posting-tag">15 000 – 20 000 PLN</span>
+      <span data-cy="category name on the job offer listing" class="posting-tag">Kubernetes</span>
+      <nfj-posting-item-city data-cy="location on the job offer listing">
+        Zdalnie +1
+        <div class="popover-locations">Warszawa, Gdańsk</div>
+      </nfj-posting-item-city>
+    </a>
+  </div>
+</nfj-postings-list>
+</body>
+</html>
