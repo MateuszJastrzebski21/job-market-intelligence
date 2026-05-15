@@ -11,7 +11,12 @@
 //   - Wire "Retry failed details" to re-run INGEST_DETAILS on URLs that
 //     failed in a previous batch (errors persisted in chrome.storage.local)
 
-import { isJJITListingUrl, isJJITUrl } from "../lib/url-matchers.js";
+import {
+  isJJITListingUrl,
+  isJJITUrl,
+  isNFJListingUrl,
+  isNFJUrl,
+} from "../lib/url-matchers.js";
 
 const statusEl = document.getElementById("status");
 const lastSaveEl = document.getElementById("last-save");
@@ -22,8 +27,8 @@ const saveBtn = document.getElementById("save-btn");
 const retryBtn = document.getElementById("retry-btn");
 
 // Per-portal config. URL matchers live in lib/url-matchers.js so they can be
-// unit-tested under jsdom without spinning up the popup. PR7 (NoFluffJobs)
-// and PR8 (LinkedIn) will append entries here + matchers there.
+// unit-tested under jsdom without spinning up the popup. PR8 (LinkedIn) will
+// append an entry here + matchers there.
 const PORTALS = [
   {
     source: "jjit",
@@ -31,6 +36,13 @@ const PORTALS = [
     origin: "https://justjoin.it/*",
     isListingUrl: isJJITListingUrl,
     matchesUrl: isJJITUrl,
+  },
+  {
+    source: "nofluff",
+    label: "NoFluffJobs",
+    origin: "https://nofluffjobs.com/*",
+    isListingUrl: isNFJListingUrl,
+    matchesUrl: isNFJUrl,
   },
 ];
 

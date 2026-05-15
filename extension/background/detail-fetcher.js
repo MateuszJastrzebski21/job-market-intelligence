@@ -54,7 +54,7 @@ export class DetailFetcher {
     const tasks = urls.map((url) =>
       this._queue.add(async () => {
         try {
-          const sourceId = extractSlug(url);
+          const sourceId = extractSlug(url, this._source);
           if (!sourceId) {
             failed += 1;
             errors.push({ kind: "bad_url", url, reason: "could not extract slug" });
@@ -85,7 +85,7 @@ export class DetailFetcher {
     await Promise.all(tasks);
     await flush();
     await this._closeOffscreen();
-    if (errors.length) await persistErrors(errors);
+    if (errors.length) await persistErrors(errors, this._source);
 
     return { updated, skipped_unknown, failed, errors_count: errors.length };
   }
@@ -121,8 +121,16 @@ export class DetailFetcher {
   }
 }
 
-function extractSlug(url) {
-  const match = String(url || "").match(/\/job-offer\/([^?#]+)/);
+// Derives source_id from a detail-page URL. Each portal keys its postings off
+// a different URL shape, so the pattern is source-aware:
+//   jjit    → /job-offer/{slug}
+//   nofluff → /{pl|en}/job/{slug}
+// The result must match the source_id the listing parser stored (both parsers
+// use the URL slug).
+export function extractSlug(url, source) {
+  const pattern =
+    source === "nofluff" ? /\/(?:pl|en)\/job\/([^?#]+)/ : /\/job-offer\/([^?#]+)/;
+  const match = String(url || "").match(pattern);
   return match ? match[1].replace(/\/+$/, "") : null;
 }
 
@@ -155,12 +163,12 @@ function parseInOffscreen({ source, html, url }) {
   });
 }
 
-async function persistErrors(errors) {
+async function persistErrors(errors, source) {
   const { errors: existing = [] } = await chrome.storage.local.get("errors");
   const stamped = errors.map((e) => ({
     ts: new Date().toISOString(),
     action: "INGEST_DETAILS",
-    source: "jjit",
+    source,
     ...e,
   }));
   await chrome.storage.local.set({ errors: [...existing, ...stamped].slice(-50) });

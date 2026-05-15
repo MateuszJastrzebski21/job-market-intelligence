@@ -5,6 +5,7 @@
 
 const PARSERS = {
   jjit: typeof globalThis.parseJJITDetail === "function" ? globalThis.parseJJITDetail : null,
+  nofluff: typeof globalThis.parseNFJDetail === "function" ? globalThis.parseNFJDetail : null,
 };
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
