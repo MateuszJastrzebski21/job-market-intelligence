@@ -292,3 +292,22 @@ def test_refusal_skipped() -> None:
     assert stats.inserted == 0
     assert extract_repo.added == []
     assert any(entry["event"] == "extract.refused" for entry in logs)
+
+
+def test_no_structured_output() -> None:
+    """A response with parsed_output=None despite a normal stop_reason is
+    logged as 'extract.no_output', counted, and skipped — no JobExtract is
+    persisted."""
+    posting = _make_posting()
+    response = SimpleNamespace(parsed_output=None, stop_reason="end_turn")
+    client = _FakeClient(lambda _k: response)
+    extractor = AnthropicExtractor(client=client, model="claude-opus-4-7")  # type: ignore[arg-type]
+
+    extract_repo = _InMemoryExtractRepo()
+    with capture_logs() as logs:
+        stats = extractor.run(_InMemoryPostingRepo([posting]), extract_repo)  # type: ignore[arg-type]
+
+    assert stats.no_output == 1
+    assert stats.inserted == 0
+    assert extract_repo.added == []
+    assert any(entry["event"] == "extract.no_output" for entry in logs)
