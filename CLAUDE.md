@@ -1,63 +1,52 @@
-Przeczytaj CLAUDE.md w root repo.
+# CLAUDE.md — JMI
 
-Kontekst: Week 1 of Phase 1. Projekt jest świeży, repo pusty 
-poza CLAUDE.md i README szkieletem.
+Job Market Intelligence — a Polish AI/ML job-market pipeline: ingest job postings
+(API scrape + HITL Chrome-extension) → LLM extract → Postgres → analytics. Portfolio
+flagship for AI Engineer applications, and a working personal tool.
 
-Zadanie Week 1: skonfigurować projekt i zaimplementować 
-end-to-end pipeline dla Wellfound (scrape -> LLM extract -> Postgres).
+## Current state (2026-05-18)
 
-Podziel to na kroki. Zacznij od Plan Mode: 
-pokaż mi konkretny plan implementacji Week 1 w rozbiciu na 
-dzisiejszą sesję (1-2h). Nie pisz jeszcze kodu. 
+- **Phase 1 — ~95% done.** ToS-clean ingestion across three sources: Hugging Face
+  Jobs (API scraper) plus JustJoinIT and NoFluffJobs (HITL Chrome-extension).
+- **Phase 2 — PoC merged (PR #20).** Analytics PoC: embeddings + KMeans clustering +
+  Markdown/HTML market report via `jmi analyze`. See ADR-0011.
+- **Phase 3 — next.** RAG résumé generator — the largest and highest-payoff phase.
+- Phases 4–5 (HITL apply agent; production / MLOps) are planned. Full plan and
+  timeline live in `docs/roadmap.md`.
 
-W planie uwzględnij:
-1. uv init + pyproject.toml z depami (wypisz które)
-2. Struktura folderów (src/jmi/...)
-3. docker-compose.yml dla Postgres + pgvector
-4. Pydantic models dla JobPosting i JobExtract
-5. Storage layer z repository pattern
-6. structlog configuration
-7. Pierwszy pytest setup
-8. .env.example i .gitignore
+## Stack
 
-W każdym kroku powiedz mi DLACZEGO tak a nie inaczej 
-(alternative + krótki trade-off).
+- Python 3.12, `uv` for package management.
+- Postgres 15 + pgvector — a single DB for data and embeddings.
+- Docker Compose for local Postgres.
+- Typer for the `jmi` CLI.
+- FastAPI — in Phase 1 since Week 2 for the HITL ingest endpoint (ADR-0009);
+  dashboard endpoints remain Phase 2.
+- Sync first; async only on a measured bottleneck.
 
-Nie dotykaj scrapera ani LLM extractora w tej sesji — 
-to zostawiamy na weekend.
+## Ingestion sources & ToS posture
 
-Koniec sesji dzisiejszej: `docker compose up` działa, 
-`uv run pytest` przechodzi (nawet z jednym testem), 
-`uv run jmi --help` pokazuje CLI scaffold.
+The Polish job portals (JustJoinIT, NoFluffJobs) prohibit automated server-side
+extraction in their ToS, backed by the 2001 PL Database Protection Act. JMI therefore
+ingests them **human-in-the-loop**: a Chrome extension captures user-selected postings
+in the user's own browser session and POSTs them to the local FastAPI ingest endpoint.
+The JMI backend never scrapes those portals server-side. See ADR-0009.
 
-- Python 3.12, uv for package management
-- Postgres 15 + pgvector (single DB for data + embeddings)
-- Docker Compose for local Postgres
-- Typer for CLI (Phase 1-2)
-- FastAPI: Phase 1 since Week 2 for the ingest endpoint (ADR-0009); dashboard endpoints still in Phase 2
-- Sync first, async only when measured bottleneck
+- **Hugging Face Jobs** — API scraper (`jmi scrape -s huggingface`); ToS-clean, the
+  template for any future API-clean source.
+- **JustJoinIT** — HITL Chrome-extension ingestion (ADR-0009). Server-side *scraping*
+  of JJIT stays excluded (ADR-0008); the extension is the sanctioned path, and `jjit`
+  is an active `Source`.
+- **NoFluffJobs** — HITL Chrome-extension ingestion (ADR-0009).
+- LinkedIn / Otta — out of scope (ToS + anti-bot; sparse junior-role volume).
 
+Every source writes one `JobPosting` table and feeds the same downstream `jmi extract`
+pipeline — the separated pipeline of ADR-0006.
 
-## Phase 1 portal order (updated Week 2 — see ADR-0008)
+## Where things are
 
-1. HuggingFace Jobs — Week 1 (easiest technically, API-friendly, AI-specific) — DONE
-2. NoFluffJobs — Week 2 (Polish market coverage; promoted from Week 3 after 
-   JJIT pivot)
-3. Wellfound OR YC Work at a Startup — Week 3 (one of them, pick based on 
-   junior-friendly volume analysis done in Week 2 retro)
-4. The other of Wellfound / YC, or Bulldogjob — Week 4
-
-JustJoinIT: OFF the table (regulamin 11.3 prohibits automated extraction; 
-robots.txt Disallow /api/; see docs/adr/0008-jjit-removed-from-phase-1.md).
-LinkedIn: OFF the table (ToS + anti-bot, not worth).
-Otta: OFF the table (EU scale-ups, junior roles rare).
-
-Rationale: Week 1 prioritized technical safety (HF Jobs as a low-risk first 
-scraper to learn the framework). Week 2 was originally JJIT (the actual job 
-hunt target despite the SPA + anti-bot challenge), but ToS diligence in the 
-Week 2 plan-mode session surfaced an explicit prohibition on automated data 
-extraction in regulamin 11.3, backed by the 2001 Polish Database Protection 
-Act. NFJ — already on the roadmap for Week 3 — moves up to fill the slot. 
-The architectural patterns researched for JJIT (Alembic migration, separated 
-3-step pipeline, multi-company mapper, Quill-aware HTML parser) port to NFJ; 
-see docs/_archived/jjit-plan-abandoned.md.
+- `src/jmi/` — backend: `sources/` (scrapers), `api/` (FastAPI ingest), `extractors/`
+  (LLM extraction), `analytics/` (Phase 2), `evaluation/`, `storage/`, `db/`.
+- `extension/` — Chrome MV3 extension (HITL ingestion).
+- `docs/adr/` — architecture decision records. `docs/roadmap.md` — the phase plan.
+- Architecture decisions are recorded as ADRs before non-trivial changes.
