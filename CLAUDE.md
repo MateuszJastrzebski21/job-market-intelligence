@@ -23,6 +23,9 @@ flagship for AI Engineer applications, and a working personal tool.
 - FastAPI — in Phase 1 since Week 2 for the HITL ingest endpoint (ADR-0009);
   dashboard endpoints remain Phase 2.
 - Sync first; async only on a measured bottleneck.
+- Dev tooling: `ruff` (lint + format), `mypy` strict mode (with the pydantic
+  plugin), `pre-commit` hooks, and GitHub Actions CI (a `quality` job running
+  ruff + mypy).
 
 ## Ingestion sources & ToS posture
 
