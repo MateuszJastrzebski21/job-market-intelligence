@@ -94,7 +94,7 @@ def extract(
     typer.echo(
         f"{stats.inserted} extracted, {stats.skipped} already done, "
         f"{stats.invalid} invalid, {stats.refused} refused, "
-        f"{stats.failed_api_calls} api_failures"
+        f"{stats.no_output} no_output, {stats.failed_api_calls} api_failures"
     )
     typer.echo(
         f"cache: {stats.cached_hits}/{stats.inserted} hits | "

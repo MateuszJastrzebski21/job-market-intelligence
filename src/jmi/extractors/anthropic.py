@@ -32,12 +32,18 @@ class _RefusalError(Exception):
         super().__init__(f"untrustworthy stop_reason: {stop_reason!r}")
 
 
+class _NoStructuredOutputError(Exception):
+    """Raised when ``messages.parse()`` returns no ``parsed_output`` despite a
+    normal stop_reason; there is nothing to persist for the posting."""
+
+
 @dataclass
 class ExtractStats:
     inserted: int = 0
     skipped: int = 0
     invalid: int = 0
     refused: int = 0
+    no_output: int = 0
     failed_api_calls: int = 0
     cached_hits: int = 0
     total_input_tokens: int = 0
@@ -98,7 +104,9 @@ class AnthropicExtractor:
         if response.stop_reason not in _VALID_STOP_REASONS:
             raise _RefusalError(response.stop_reason)
 
-        parsed: JobExtractSchema = response.parsed_output
+        parsed = response.parsed_output
+        if parsed is None:
+            raise _NoStructuredOutputError(f"no structured output for posting {posting.id}")
 
         return JobExtract(
             job_posting_id=posting.id,
@@ -165,6 +173,16 @@ class AnthropicExtractor:
                 )
                 stats.refused += 1
                 continue
+            except _NoStructuredOutputError as exc:
+                log.warning(
+                    "extract.no_output",
+                    source=posting.source,
+                    posting_id=str(posting.id),
+                    model=self.model,
+                    error=str(exc),
+                )
+                stats.no_output += 1
+                continue
             except anthropic.APIError as exc:
                 log.error(
                     "extract.skip.api_error",
@@ -188,6 +206,7 @@ class AnthropicExtractor:
             skipped=stats.skipped,
             invalid=stats.invalid,
             refused=stats.refused,
+            no_output=stats.no_output,
             failed_api_calls=stats.failed_api_calls,
             cached_hits=stats.cached_hits,
             total_input_tokens=stats.total_input_tokens,
