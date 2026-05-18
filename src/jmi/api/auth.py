@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hmac
+
 from fastapi import Depends, Header, HTTPException, status
 
 from jmi.api.deps import get_app_settings
@@ -16,7 +18,9 @@ def verify_ingest_token(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Server misconfigured: JMI_INGEST_TOKEN not set",
         )
-    if x_ingest_token != settings.ingest_token:
+    # compare_digest keeps the check timing-safe; `or ""` guards the
+    # missing-header case (None) since compare_digest needs two real strings.
+    if not hmac.compare_digest(x_ingest_token or "", settings.ingest_token):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or missing ingest token",

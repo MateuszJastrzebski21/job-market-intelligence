@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from pydantic import Field
+import functools
+
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -14,15 +16,20 @@ class Settings(BaseSettings):
         populate_by_name=True,
     )
 
-    database_url: str = Field(
-        default="postgresql+psycopg://jmi:jmi_dev_password@localhost:5432/jmi",
-        alias="DATABASE_URL",
-    )
+    database_url: str = Field(default="", alias="DATABASE_URL")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
     log_json: bool = Field(default=False, alias="LOG_JSON")
     anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
     ingest_token: str | None = Field(default=None, alias="JMI_INGEST_TOKEN")
 
+    @field_validator("database_url")
+    @classmethod
+    def _require_database_url(cls, value: str) -> str:
+        if not value:
+            raise ValueError("DATABASE_URL must be set, no default credential fallback")
+        return value
 
+
+@functools.lru_cache(maxsize=1)
 def get_settings() -> Settings:
     return Settings()

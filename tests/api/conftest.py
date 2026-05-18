@@ -74,7 +74,8 @@ def in_memory_repo() -> _InMemoryPostingRepo:
 def client(in_memory_repo: _InMemoryPostingRepo) -> Iterator[TestClient]:
     app = create_app()
     app.dependency_overrides[get_app_settings] = lambda: Settings(
-        ingest_token=TEST_TOKEN
+        ingest_token=TEST_TOKEN,
+        database_url="postgresql+psycopg://test:test@localhost:5432/test",
     )
     app.dependency_overrides[get_posting_repo] = lambda: in_memory_repo
     app.dependency_overrides[health_db_check] = lambda: True
