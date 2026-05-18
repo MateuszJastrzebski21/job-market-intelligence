@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from datetime import datetime
 from typing import Any
 from uuid import UUID, uuid4
@@ -33,7 +31,7 @@ class JobPostingORM(Base):
     raw_payload: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
     embedding: Mapped[list[float] | None] = mapped_column(Vector(384), nullable=True)
 
-    extracts: Mapped[list[JobExtractORM]] = relationship(
+    extracts: Mapped[list["JobExtractORM"]] = relationship(
         back_populates="posting",
         cascade="all, delete-orphan",
     )

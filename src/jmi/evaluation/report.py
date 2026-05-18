@@ -4,8 +4,6 @@ The runner produces an :class:`EvaluationReport`; the renderers here turn it
 into either a human-readable text report or a JSON document.
 """
 
-from __future__ import annotations
-
 import dataclasses
 import json
 from dataclasses import dataclass, field

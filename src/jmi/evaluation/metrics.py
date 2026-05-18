@@ -4,8 +4,6 @@ Pure functions, no I/O. Each compares one extracted field against its
 ground-truth label. Argument order is always ``(actual, expected)``.
 """
 
-from __future__ import annotations
-
 
 def exact_match(actual: object | None, expected: object | None) -> bool:
     """Equality, with both-``None`` counting as a match.

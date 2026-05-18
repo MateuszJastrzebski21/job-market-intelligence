@@ -4,8 +4,6 @@ The functions here take repository objects (not a Session) so they can be
 unit-tested against in-memory fakes — see ADR-0010 and tests/evaluation/.
 """
 
-from __future__ import annotations
-
 import statistics
 from pathlib import Path
 from typing import Protocol
