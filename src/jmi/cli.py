@@ -28,6 +28,10 @@ _OUTPUT_OPTION = typer.Option(
     "Default: docs/market-report-{today}.",
 )
 
+_DB_UNREACHABLE_MSG = (
+    "Cannot connect to database — is `docker compose up` running?"
+)
+
 
 @app.callback()
 def main() -> None:
@@ -42,6 +46,8 @@ def scrape(
     limit: int | None = typer.Option(None, "--limit", "-n", help="Max postings to scrape."),
 ) -> None:
     """Scrape job postings from a source into the database."""
+    from sqlalchemy.exc import OperationalError
+
     from jmi.db.base import get_session
     from jmi.sources.huggingface import HuggingFaceScraper
     from jmi.storage.jobs import JobPostingRepository
@@ -51,9 +57,13 @@ def scrape(
         raise typer.Exit(1)
 
     scraper = HuggingFaceScraper()
-    with get_session() as session:
-        repo = JobPostingRepository(session)
-        stats = scraper.run(repo, limit=limit)
+    try:
+        with get_session() as session:
+            repo = JobPostingRepository(session)
+            stats = scraper.run(repo, limit=limit)
+    except OperationalError as exc:
+        typer.echo(_DB_UNREACHABLE_MSG, err=True)
+        raise typer.Exit(1) from exc
     typer.echo(
         f"{stats.inserted} new, {stats.skipped} existing, {stats.invalid} invalid"
     )
@@ -67,15 +77,26 @@ def extract(
     ),
 ) -> None:
     """Run LLM extraction on postings without an extract for the given model."""
+    from sqlalchemy.exc import OperationalError
+
     from jmi.db.base import get_session
     from jmi.extractors import AnthropicExtractor
     from jmi.storage.jobs import JobExtractRepository, JobPostingRepository
 
-    extractor = AnthropicExtractor(model=model)
-    with get_session() as session:
-        posting_repo = JobPostingRepository(session)
-        extract_repo = JobExtractRepository(session)
-        stats = extractor.run(posting_repo, extract_repo, limit=limit)
+    try:
+        extractor = AnthropicExtractor(model=model)
+    except RuntimeError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+
+    try:
+        with get_session() as session:
+            posting_repo = JobPostingRepository(session)
+            extract_repo = JobExtractRepository(session)
+            stats = extractor.run(posting_repo, extract_repo, limit=limit)
+    except OperationalError as exc:
+        typer.echo(_DB_UNREACHABLE_MSG, err=True)
+        raise typer.Exit(1) from exc
 
     typer.echo(
         f"{stats.inserted} extracted, {stats.skipped} already done, "
@@ -148,6 +169,8 @@ def analyze(
     ),
 ) -> None:
     """Embed postings, cluster them, and write Markdown + HTML market reports."""
+    from sqlalchemy.exc import OperationalError
+
     from jmi.analytics.report import generate_html_report, generate_markdown_report
     from jmi.analytics.runner import run_analysis
     from jmi.db.base import get_session
@@ -163,7 +186,7 @@ def analyze(
                 JobExtractRepository(session),
                 skip_embed=skip_embed,
             )
-    except ValueError as exc:
+    except (ValueError, OperationalError, RuntimeError, OSError) as exc:
         typer.echo(f"analyze failed: {exc}", err=True)
         raise typer.Exit(1) from exc
 
