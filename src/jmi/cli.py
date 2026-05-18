@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import date
 from pathlib import Path
 
 import typer
@@ -17,6 +18,14 @@ _SEED_OPTION = typer.Option(
     Path("docs/ground_truth/phase1_seed.json"),
     "--seed",
     help="Ground-truth seed JSON file.",
+)
+
+_OUTPUT_OPTION = typer.Option(
+    None,
+    "--output",
+    "-o",
+    help="Report path stem; writes {stem}.md and {stem}.html. "
+    "Default: docs/market-report-{today}.",
 )
 
 
@@ -114,6 +123,69 @@ def evaluate(
         typer.echo(format_report_json(report))
     else:
         typer.echo(format_report(report, show_unmatched=show_unmatched))
+
+
+def _resolve_output_stem(output: Path | None, report_date: date) -> Path:
+    """Resolve the --output argument to a path stem. A trailing .md/.html is
+    stripped so `--output report.html` still yields report.md + report.html."""
+    if output is None:
+        return Path("docs") / f"market-report-{report_date.isoformat()}"
+    text = str(output)
+    for suffix in (".md", ".html"):
+        if text.endswith(suffix):
+            return Path(text[: -len(suffix)])
+    return output
+
+
+@app.command()
+def analyze(
+    output: Path | None = _OUTPUT_OPTION,
+    skip_embed: bool = typer.Option(
+        False,
+        "--skip-embed",
+        help="Reuse embeddings already stored in the DB instead of recomputing.",
+    ),
+) -> None:
+    """Embed postings, cluster them, and write Markdown + HTML market reports."""
+    from jmi.analytics.report import generate_html_report, generate_markdown_report
+    from jmi.analytics.runner import run_analysis
+    from jmi.db.base import get_session
+    from jmi.storage.jobs import JobExtractRepository, JobPostingRepository
+
+    report_date = date.today()
+    stem = _resolve_output_stem(output, report_date)
+
+    try:
+        with get_session() as session:
+            bundle = run_analysis(
+                JobPostingRepository(session),
+                JobExtractRepository(session),
+                skip_embed=skip_embed,
+            )
+    except ValueError as exc:
+        typer.echo(f"analyze failed: {exc}", err=True)
+        raise typer.Exit(1) from exc
+
+    markdown = generate_markdown_report(
+        bundle.cluster_result, bundle.jobs, report_date=report_date
+    )
+    html_report = generate_html_report(
+        bundle.cluster_result, bundle.jobs, report_date=report_date
+    )
+
+    md_path = Path(f"{stem}.md")
+    html_path = Path(f"{stem}.html")
+    md_path.parent.mkdir(parents=True, exist_ok=True)
+    md_path.write_text(markdown, encoding="utf-8")
+    html_path.write_text(html_report, encoding="utf-8")
+
+    result = bundle.cluster_result
+    typer.echo(
+        f"{len(bundle.jobs)} postings, k={result.k}, "
+        f"silhouette={result.silhouette:.2f}"
+    )
+    typer.echo(f"wrote {md_path}")
+    typer.echo(f"wrote {html_path}")
 
 
 @app.command("init-db")

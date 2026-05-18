@@ -222,3 +222,7 @@ backup-*.sql
 # Node tooling for the extension/ vitest test harness (PR5+)
 extension/node_modules/
 extension/coverage/
+
+# Generated market-report HTML (Phase 2 PoC, ADR-0011). The Markdown companion
+# is committed as the GitHub-rendered artifact; the HTML is a local build only.
+docs/market-report-*.html
