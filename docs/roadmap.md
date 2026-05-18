@@ -1,6 +1,6 @@
 # JMI Roadmap
 
-Last updated: 2026-05-17. Reviewed weekly. Updates via PR.
+Last updated: 2026-05-18. Reviewed weekly. Updates via PR.
 
 ## Compass
 
@@ -17,8 +17,8 @@ startup within 6-12 weeks of focused execution.
 ## Current state (as of last update)
 
 - Phase 1: 95% done (3 portals: HF + JJIT + NFJ, all HITL/API ToS-clean)
-- Phase 2: 0% (PR18 PoC pending)
-- Phase 3-5: 0%
+- Phase 2: PoC merged (PR #20) — embeddings + clustering + market report
+- Phase 3: next (RAG résumé generator); Phase 4-5: 0%
 - Tests: 80 pytest + 89 vitest = 169 green
 - Coverage: ~57 jobs ingested on PC, ~18 on Mac (per-machine DBs)
 - Velocity vs plan: 2x ahead
@@ -200,7 +200,7 @@ Realistic dates assuming sustained ~15h/week pace:
 
 | Milestone | Target date | Confidence |
 |---|---|---|
-| Phase 2 PoC merged | 2026-05-18 (Mon) | 95% |
+| Phase 2 PoC merged | 2026-05-18 | done — PR #20 |
 | README reframe + roadmap committed | 2026-05-20 | 90% |
 | First application sent | 2026-05-22 | 85% |
 | PR17 quality fix merged | 2026-05-25 | 80% |
