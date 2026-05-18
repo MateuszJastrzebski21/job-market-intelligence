@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID, uuid4
 
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import JSON, ForeignKey, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PgUUID
@@ -30,6 +31,7 @@ class JobPostingORM(Base):
     posted_at: Mapped[datetime | None] = mapped_column(nullable=True)
     scraped_at: Mapped[datetime] = mapped_column(nullable=False, index=True)
     raw_payload: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
+    embedding: Mapped[list[float] | None] = mapped_column(Vector(384), nullable=True)
 
     extracts: Mapped[list[JobExtractORM]] = relationship(
         back_populates="posting",

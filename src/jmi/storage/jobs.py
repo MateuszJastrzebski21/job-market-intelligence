@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Any
 from uuid import UUID
 
@@ -82,6 +83,45 @@ class JobPostingRepository:
             .limit(limit)
         )
         return [_posting_to_domain(o) for o in self._session.execute(stmt).scalars()]
+
+    def store_embedding(self, posting_id: UUID, vector: Sequence[float]) -> None:
+        """Persist the analytics embedding for an existing posting.
+
+        Separate from `add`/`update_description` because embeddings are produced
+        by a downstream pass (`jmi analyze`, ADR-0011), not at ingest time.
+        Raises KeyError if no row matches posting_id.
+        """
+        orm = self._session.get(JobPostingORM, posting_id)
+        if orm is None:
+            raise KeyError(posting_id)
+        orm.embedding = list(vector)
+        self._session.flush()
+
+    def list_embeddable(self) -> list[JobPosting]:
+        """Postings that carry description text — the inputs the analytics
+        embedder can encode. Ordered by (scraped_at, id) so the sequence is
+        fully deterministic: clustering depends on a stable input order.
+        """
+        stmt = (
+            select(JobPostingORM)
+            .where(JobPostingORM.description_text.is_not(None))
+            .order_by(JobPostingORM.scraped_at.asc(), JobPostingORM.id.asc())
+        )
+        return [_posting_to_domain(o) for o in self._session.execute(stmt).scalars()]
+
+    def list_with_embeddings(self) -> list[tuple[JobPosting, list[float]]]:
+        """Postings that already have a stored embedding, paired with the
+        vector. Used by `jmi analyze --skip-embed` to re-cluster without
+        recomputing embeddings. Ordered by (scraped_at, id) so --skip-embed
+        reproduces the same clustering as the embedding run.
+        """
+        stmt = (
+            select(JobPostingORM)
+            .where(JobPostingORM.embedding.is_not(None))
+            .order_by(JobPostingORM.scraped_at.asc(), JobPostingORM.id.asc())
+        )
+        rows = self._session.execute(stmt).scalars()
+        return [(_posting_to_domain(o), list(o.embedding)) for o in rows]  # type: ignore[arg-type]
 
 
 class JobExtractRepository:
