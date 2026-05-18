@@ -71,3 +71,7 @@ addopts = ["-ra", "--strict-markers", "--strict-config"]
 [tool.mypy]
 python_version = "3.12"
 strict = false
+
+[[tool.mypy.overrides]]
+module = ["sklearn.*", "pgvector.*"]
+ignore_missing_imports = true
