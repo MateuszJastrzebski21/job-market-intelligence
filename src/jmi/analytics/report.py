@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import html
 import json
 from collections import Counter
@@ -123,8 +121,7 @@ def _render_markdown(data: ReportData) -> str:
         "",
         "## Clusters",
         "",
-        f"k = {data.k} (fixed). KMeans over MiniLM embeddings of posting "
-        "title + description text.",
+        f"k = {data.k} (fixed). KMeans over MiniLM embeddings of posting title + description text.",
         "",
     ]
     for cluster in data.clusters:
@@ -141,8 +138,7 @@ def _render_markdown(data: ReportData) -> str:
             "",
         ]
     flag = (
-        " — LOW (below the 0.20 warn threshold; clusters weakly separated, "
-        "expected at small N)"
+        " — LOW (below the 0.20 warn threshold; clusters weakly separated, expected at small N)"
         if data.silhouette_low
         else ""
     )
@@ -197,14 +193,11 @@ def _render_html(data: ReportData) -> str:
     cluster_blocks: list[str] = []
     for cluster in data.clusters:
         terms = (
-            ", ".join(
-                f"{html.escape(term)} ({count})" for term, count in cluster.top_tech
-            )
+            ", ".join(f"{html.escape(term)} ({count})" for term, count in cluster.top_tech)
             or "<em>no extract data</em>"
         )
         titles = (
-            "; ".join(html.escape(t) for t in cluster.sample_titles)
-            or "<em>empty cluster</em>"
+            "; ".join(html.escape(t) for t in cluster.sample_titles) or "<em>empty cluster</em>"
         )
         cluster_blocks.append(
             f"  <article>\n"
@@ -215,8 +208,7 @@ def _render_html(data: ReportData) -> str:
         )
 
     sources = "\n".join(
-        f"  <li>{html.escape(source)}: {count}</li>"
-        for source, count in data.per_source.items()
+        f"  <li>{html.escape(source)}: {count}</li>" for source, count in data.per_source.items()
     )
     caveats = "\n".join(f"  <li>{html.escape(c)}</li>" for c in _caveats(data))
     flag = " — LOW" if data.silhouette_low else ""

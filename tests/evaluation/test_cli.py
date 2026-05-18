@@ -3,6 +3,7 @@
 Kept DB-free by monkeypatching get_session, load_seed, and evaluate_all —
 the runner's logic is covered by test_runner.py.
 """
+
 from __future__ import annotations
 
 import json
@@ -60,9 +61,7 @@ def _patch(monkeypatch, report: EvaluationReport, recorder: dict) -> None:
 def test_evaluate_text_output(
     monkeypatch, posting_repo, extract_repo, make_posting, make_extract, make_entry
 ) -> None:
-    report = _build_report(
-        posting_repo, extract_repo, make_posting, make_extract, make_entry
-    )
+    report = _build_report(posting_repo, extract_repo, make_posting, make_extract, make_entry)
     _patch(monkeypatch, report, {})
 
     result = cli.invoke(app, ["evaluate"])
@@ -76,9 +75,7 @@ def test_evaluate_text_output(
 def test_evaluate_source_filter_forwarded(
     monkeypatch, posting_repo, extract_repo, make_posting, make_extract, make_entry
 ) -> None:
-    report = _build_report(
-        posting_repo, extract_repo, make_posting, make_extract, make_entry
-    )
+    report = _build_report(posting_repo, extract_repo, make_posting, make_extract, make_entry)
     recorder: dict = {}
     _patch(monkeypatch, report, recorder)
 
@@ -91,9 +88,7 @@ def test_evaluate_source_filter_forwarded(
 def test_evaluate_json_output_is_valid(
     monkeypatch, posting_repo, extract_repo, make_posting, make_extract, make_entry
 ) -> None:
-    report = _build_report(
-        posting_repo, extract_repo, make_posting, make_extract, make_entry
-    )
+    report = _build_report(posting_repo, extract_repo, make_posting, make_extract, make_entry)
     _patch(monkeypatch, report, {})
 
     result = cli.invoke(app, ["evaluate", "--output", "json"])
@@ -107,9 +102,7 @@ def test_evaluate_json_output_is_valid(
 def test_evaluate_show_unmatched_lists_id_only(
     monkeypatch, posting_repo, extract_repo, make_posting, make_extract, make_entry
 ) -> None:
-    report = _build_report(
-        posting_repo, extract_repo, make_posting, make_extract, make_entry
-    )
+    report = _build_report(posting_repo, extract_repo, make_posting, make_extract, make_entry)
     _patch(monkeypatch, report, {})
 
     default_run = cli.invoke(app, ["evaluate"])

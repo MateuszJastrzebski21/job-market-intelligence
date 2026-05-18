@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -14,10 +12,10 @@ log = structlog.get_logger(__name__)
 MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 EMBEDDING_DIM = 384
 
-_model: SentenceTransformer | None = None
+_model: "SentenceTransformer | None" = None
 
 
-def _get_model() -> SentenceTransformer:
+def _get_model() -> "SentenceTransformer":
     """Load the sentence-transformers model on first use and cache it.
 
     Deliberately lazy: importing this module must not pull in torch or trigger

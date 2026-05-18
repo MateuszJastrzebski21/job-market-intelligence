@@ -1,4 +1,5 @@
 """Tests for the lazy DB engine accessor (get_engine)."""
+
 from __future__ import annotations
 
 from collections.abc import Iterator

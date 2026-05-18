@@ -9,6 +9,7 @@ correctness for this migration is otherwise covered by:
   - the live `alembic upgrade head` against the dev database, with
     `information_schema.columns.is_nullable` returning YES afterward.
 """
+
 from __future__ import annotations
 
 from datetime import UTC, datetime

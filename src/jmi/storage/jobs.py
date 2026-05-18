@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Sequence
 from typing import Any
 from uuid import UUID
@@ -36,7 +34,7 @@ class JobPostingRepository:
         orm = self._session.execute(stmt).scalar_one_or_none()
         return _posting_to_domain(orm) if orm else None
 
-    def list(self, limit: int = 100, offset: int = 0) -> list[JobPosting]:
+    def list_all(self, limit: int = 100, offset: int = 0) -> list[JobPosting]:
         stmt = (
             select(JobPostingORM)
             .order_by(JobPostingORM.scraped_at.desc())
@@ -65,9 +63,7 @@ class JobPostingRepository:
         orm.raw_payload = raw_payload
         self._session.flush()
 
-    def list_pending_details(
-        self, source: str, limit: int = 100
-    ) -> list[JobPosting]:
+    def list_pending_details(self, source: str, limit: int = 100) -> list[JobPosting]:
         """Postings for a given source that still need a detail-fetch.
 
         Ordered FIFO by scraped_at so the oldest listing-scrape backlog drains
@@ -138,7 +134,7 @@ class JobExtractRepository:
         orm = self._session.get(JobExtractORM, id)
         return _extract_to_domain(orm) if orm else None
 
-    def list(self, limit: int = 100, offset: int = 0) -> list[JobExtract]:
+    def list_all(self, limit: int = 100, offset: int = 0) -> list[JobExtract]:
         stmt = (
             select(JobExtractORM)
             .order_by(JobExtractORM.extracted_at.desc())
@@ -155,9 +151,7 @@ class JobExtractRepository:
         )
         return [_extract_to_domain(o) for o in self._session.execute(stmt).scalars()]
 
-    def get_by_posting_and_model(
-        self, posting_id: UUID, model_name: str
-    ) -> JobExtract | None:
+    def get_by_posting_and_model(self, posting_id: UUID, model_name: str) -> JobExtract | None:
         stmt = select(JobExtractORM).where(
             JobExtractORM.job_posting_id == posting_id,
             JobExtractORM.model_name == model_name,
@@ -186,9 +180,9 @@ def _posting_to_orm(p: JobPosting) -> JobPostingORM:
 def _posting_to_domain(o: JobPostingORM) -> JobPosting:
     return JobPosting(
         id=o.id,
-        source=o.source,  # type: ignore[arg-type]
+        source=o.source,
         source_job_id=o.source_job_id,
-        url=o.url,  # type: ignore[arg-type]
+        url=o.url,
         title=o.title,
         company_name=o.company_name,
         location_raw=o.location_raw,
@@ -222,14 +216,14 @@ def _extract_to_domain(o: JobExtractORM) -> JobExtract:
     return JobExtract(
         id=o.id,
         job_posting_id=o.job_posting_id,
-        seniority=o.seniority,  # type: ignore[arg-type]
+        seniority=o.seniority,
         tech_stack=list(o.tech_stack),
         salary_min=o.salary_min,
         salary_max=o.salary_max,
         salary_currency=o.salary_currency,
-        remote_policy=o.remote_policy,  # type: ignore[arg-type]
+        remote_policy=o.remote_policy,
         years_experience_min=o.years_experience_min,
-        employment_type=o.employment_type,  # type: ignore[arg-type]
+        employment_type=o.employment_type,
         model_name=o.model_name,
         raw_llm_response=o.raw_llm_response,
         extracted_at=o.extracted_at,

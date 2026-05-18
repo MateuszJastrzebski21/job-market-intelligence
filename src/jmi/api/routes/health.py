@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from fastapi import APIRouter, Depends, Response
 
 from jmi import __version__
@@ -10,9 +8,7 @@ router = APIRouter()
 
 
 @router.get("/health", response_model=HealthOut)
-def health(
-    response: Response, db_ok: bool = Depends(health_db_check)
-) -> HealthOut:
+def health(response: Response, db_ok: bool = Depends(health_db_check)) -> HealthOut:
     """Liveness + DB-reachability probe used by the extension popup.
 
     Returns 503 when the DB is unreachable so monitoring/ops can alert; the

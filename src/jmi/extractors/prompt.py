@@ -1,8 +1,7 @@
-from __future__ import annotations
-
 import json
 from functools import lru_cache
 from pathlib import Path
+from typing import Any
 
 _PACKAGE_ROOT = Path(__file__).resolve().parents[3]
 SEED_PATH = _PACKAGE_ROOT / "docs" / "ground_truth" / "phase1_seed.json"
@@ -218,7 +217,7 @@ null for unknowns). Do not add fields outside the schema.
 """
 
 
-def _format_example(example: dict) -> str:
+def _format_example(example: dict[str, Any]) -> str:
     posting = example["posting"]
     expected = example["expected"]
     notes = example.get("notes", "")
@@ -245,8 +244,9 @@ def _format_example(example: dict) -> str:
 
 
 @lru_cache(maxsize=1)
-def _load_seed_examples() -> list[dict]:
-    return json.loads(SEED_PATH.read_text(encoding="utf-8"))
+def _load_seed_examples() -> list[dict[str, Any]]:
+    data: list[dict[str, Any]] = json.loads(SEED_PATH.read_text(encoding="utf-8"))
+    return data
 
 
 @lru_cache(maxsize=1)

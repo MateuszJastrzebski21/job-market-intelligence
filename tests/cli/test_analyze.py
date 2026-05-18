@@ -4,6 +4,7 @@ Kept DB-free by monkeypatching get_session and run_analysis — the same pattern
 as tests/evaluation/test_cli.py. The report renderers run for real against a
 canned AnalysisBundle, so the test also exercises file output end to end.
 """
+
 from __future__ import annotations
 
 from collections.abc import Iterator
@@ -31,20 +32,21 @@ def _bundle() -> AnalysisBundle:
     """A small, realistic AnalysisBundle the report renderers can format."""
     ids = [UUID(int=i) for i in range(4)]
     jobs = [
-        JobView(posting_id=ids[0], title="ML Engineer",
-                source="huggingface", tech_stack=["Python"]),
-        JobView(posting_id=ids[1], title="Data Scientist",
-                source="huggingface", tech_stack=["Python", "SQL"]),
-        JobView(posting_id=ids[2], title="MLOps Engineer",
-                source="jjit", tech_stack=["Docker"]),
-        JobView(posting_id=ids[3], title="AI Researcher",
-                source="jjit", tech_stack=[]),
+        JobView(
+            posting_id=ids[0], title="ML Engineer", source="huggingface", tech_stack=["Python"]
+        ),
+        JobView(
+            posting_id=ids[1],
+            title="Data Scientist",
+            source="huggingface",
+            tech_stack=["Python", "SQL"],
+        ),
+        JobView(posting_id=ids[2], title="MLOps Engineer", source="jjit", tech_stack=["Docker"]),
+        JobView(posting_id=ids[3], title="AI Researcher", source="jjit", tech_stack=[]),
     ]
     clusters = [
-        Cluster(cluster_id=0, posting_ids=[ids[0], ids[1]],
-                centroid=[0.0] * 384, size=2),
-        Cluster(cluster_id=1, posting_ids=[ids[2], ids[3]],
-                centroid=[0.0] * 384, size=2),
+        Cluster(cluster_id=0, posting_ids=[ids[0], ids[1]], centroid=[0.0] * 384, size=2),
+        Cluster(cluster_id=1, posting_ids=[ids[2], ids[3]], centroid=[0.0] * 384, size=2),
     ]
     result = ClusterResult(k=2, n_samples=4, silhouette=0.3, clusters=clusters)
     return AnalysisBundle(cluster_result=result, jobs=jobs)
@@ -89,9 +91,7 @@ def test_analyze_skip_embed_forwarded(monkeypatch, tmp_path) -> None:
     recorder: dict = {}
     _patch(monkeypatch, recorder)
 
-    result = cli.invoke(
-        app, ["analyze", "--output", str(tmp_path / "r"), "--skip-embed"]
-    )
+    result = cli.invoke(app, ["analyze", "--output", str(tmp_path / "r"), "--skip-embed"])
 
     assert result.exit_code == 0, result.stdout
     assert recorder["skip_embed"] is True

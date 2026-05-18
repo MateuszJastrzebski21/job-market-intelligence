@@ -4,7 +4,6 @@ Each function here is overridable in tests via ``app.dependency_overrides[...]``
 The repository dependency wraps the existing ``get_session`` context manager so
 the session opens and closes around a single request lifecycle.
 """
-from __future__ import annotations
 
 from collections.abc import Iterator
 

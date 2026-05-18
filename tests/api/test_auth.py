@@ -4,6 +4,7 @@ Exercises the timing-safe `hmac.compare_digest` comparison via the protected
 `/api/ingest` route, plus the fail-closed behaviour when the server has no
 token configured.
 """
+
 from __future__ import annotations
 
 from collections.abc import Iterator
@@ -31,9 +32,7 @@ def _ingest_body() -> dict[str, Any]:
     }
 
 
-def test_correct_token_authorizes(
-    client: TestClient, auth_headers: dict[str, str]
-) -> None:
+def test_correct_token_authorizes(client: TestClient, auth_headers: dict[str, str]) -> None:
     response = client.post("/api/ingest", json=_ingest_body(), headers=auth_headers)
     assert response.status_code == 200
 

@@ -1,4 +1,5 @@
 """Unit tests for the field-comparison metrics."""
+
 from __future__ import annotations
 
 import pytest
@@ -46,9 +47,7 @@ def test_jaccard_case_insensitive_and_stripped() -> None:
 
 def test_jaccard_partial_overlap() -> None:
     # intersection {python}, union {python, aws, gcp} -> 1/3
-    assert jaccard_similarity(["Python", "AWS"], ["Python", "GCP"]) == pytest.approx(
-        1 / 3
-    )
+    assert jaccard_similarity(["Python", "AWS"], ["Python", "GCP"]) == pytest.approx(1 / 3)
 
 
 def test_numeric_match_both_null() -> None:

@@ -1,4 +1,5 @@
 """Tests for Settings validation and the get_settings cache."""
+
 from __future__ import annotations
 
 import pytest

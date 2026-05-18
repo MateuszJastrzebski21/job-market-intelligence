@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from uuid import UUID
 
 import numpy as np
@@ -35,8 +33,8 @@ def _tech_stack_by_posting(
 ) -> dict[UUID, list[str]]:
     """Map each posting to the tech_stack of its most recent extract."""
     by_posting: dict[UUID, list[str]] = {}
-    # list() returns extracts newest-first, so the first seen per posting wins.
-    for extract in extract_repo.list(limit=10_000):
+    # list_all() returns extracts newest-first, so the first seen per posting wins.
+    for extract in extract_repo.list_all(limit=10_000):
         by_posting.setdefault(extract.job_posting_id, extract.tech_stack)
     return by_posting
 
@@ -58,8 +56,7 @@ def run_analysis(
         pairs = posting_repo.list_with_embeddings()
         if not pairs:
             raise ValueError(
-                "no stored embeddings found — run `jmi analyze` without "
-                "--skip-embed first"
+                "no stored embeddings found — run `jmi analyze` without --skip-embed first"
             )
         postings = [posting for posting, _ in pairs]
         embeddings = np.array([vector for _, vector in pairs], dtype=np.float32)

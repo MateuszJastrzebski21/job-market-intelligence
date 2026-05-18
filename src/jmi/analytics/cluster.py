@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Sequence
 from uuid import UUID
 
@@ -89,6 +87,4 @@ def cluster_postings(
     else:
         log.info("clustering complete", **fields)
 
-    return ClusterResult(
-        k=k, n_samples=n_samples, silhouette=silhouette, clusters=clusters
-    )
+    return ClusterResult(k=k, n_samples=n_samples, silhouette=silhouette, clusters=clusters)

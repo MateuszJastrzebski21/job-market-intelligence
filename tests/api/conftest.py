@@ -10,6 +10,7 @@ overrides so no real database, settings file, or env var is required:
 
 The fake mirrors only the methods the routes actually call.
 """
+
 from __future__ import annotations
 
 from collections.abc import Iterator
@@ -39,9 +40,7 @@ class _InMemoryPostingRepo:
         self._by_source_key[(posting.source, posting.source_job_id)] = posting
         return posting
 
-    def get_by_source(
-        self, source: str, source_job_id: str
-    ) -> JobPosting | None:
+    def get_by_source(self, source: str, source_job_id: str) -> JobPosting | None:
         return self._by_source_key.get((source, source_job_id))
 
     def update_description(

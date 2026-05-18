@@ -3,7 +3,6 @@
 The runner produces an :class:`EvaluationReport`; the renderers here turn it
 into either a human-readable text report or a JSON document.
 """
-from __future__ import annotations
 
 import dataclasses
 import json
@@ -154,10 +153,7 @@ def format_report(report: EvaluationReport, *, show_unmatched: bool = False) -> 
 
     lines.append(f"Total labels: {report.total_labels}")
     lines.append(f"  - With extract: {report.with_extract}")
-    lines.append(
-        f"  - Without extract: {report.without_extract} "
-        f"(unmatched or no extract yet)"
-    )
+    lines.append(f"  - Without extract: {report.without_extract} (unmatched or no extract yet)")
 
     if report.with_extract == 0:
         lines.append("")
@@ -170,10 +166,7 @@ def format_report(report: EvaluationReport, *, show_unmatched: bool = False) -> 
         lines.append("Per-field accuracy (exact match where applicable):")
         for name in BOOLEAN_FIELDS:
             fa = report.boolean_metrics[name]
-            lines.append(
-                f"  {name:<22}: {_pct(fa.accuracy)} "
-                f"({fa.matches}/{fa.evaluated})"
-            )
+            lines.append(f"  {name:<22}: {_pct(fa.accuracy)} ({fa.matches}/{fa.evaluated})")
 
         ts = report.tech_stack_metrics
         lines.append("")
@@ -182,9 +175,7 @@ def format_report(report: EvaluationReport, *, show_unmatched: bool = False) -> 
             lines.append("  tech_stack (Jaccard): N/A")
         else:
             lines.append(f"  tech_stack (Jaccard avg): {ts.jaccard_avg:.2f}")
-            lines.append(
-                f"    - Range: {ts.jaccard_min:.2f} - {ts.jaccard_max:.2f}"
-            )
+            lines.append(f"    - Range: {ts.jaccard_min:.2f} - {ts.jaccard_max:.2f}")
             lines.append(f"    - Median: {ts.jaccard_median:.2f}")
             lines.append(
                 f"    - >={ts.threshold:.0%} threshold passed: "
@@ -194,27 +185,19 @@ def format_report(report: EvaluationReport, *, show_unmatched: bool = False) -> 
         sal = report.salary_metrics
         lines.append("")
         lines.append("Per-field salary recall (critical metric):")
-        lines.append(
-            f"  salary_min present in label: {sal.min_label_count}/"
-            f"{report.with_extract}"
-        )
+        lines.append(f"  salary_min present in label: {sal.min_label_count}/{report.with_extract}")
         warn_min = " <!>" if (sal.min_recall is not None and sal.min_recall < 0.5) else ""
         lines.append(
             f"  salary_min captured in extract: {sal.min_captured_count}/"
             f"{sal.min_label_count} ({_pct(sal.min_recall)} recall){warn_min}"
         )
-        lines.append(
-            f"  salary_max present in label: {sal.max_label_count}/"
-            f"{report.with_extract}"
-        )
+        lines.append(f"  salary_max present in label: {sal.max_label_count}/{report.with_extract}")
         warn_max = " <!>" if (sal.max_recall is not None and sal.max_recall < 0.5) else ""
         lines.append(
             f"  salary_max captured in extract: {sal.max_captured_count}/"
             f"{sal.max_label_count} ({_pct(sal.max_recall)} recall){warn_max}"
         )
-        captured_total = (
-            sal.salary_with_correct_currency + sal.salary_with_wrong_currency
-        )
+        captured_total = sal.salary_with_correct_currency + sal.salary_with_wrong_currency
         lines.append(
             f"  salary captured WITH correct currency: "
             f"{sal.salary_with_correct_currency}/{captured_total}"
@@ -244,9 +227,7 @@ def format_report(report: EvaluationReport, *, show_unmatched: bool = False) -> 
         lines.append("")
         lines.append("Unmatched labels (debugging):")
         for u in report.unmatched_details:
-            lines.append(
-                f'  - id="{u.entry_id}" reason={u.reason} ({u.hint})'
-            )
+            lines.append(f'  - id="{u.entry_id}" reason={u.reason} ({u.hint})')
 
     return "\n".join(lines)
 

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Any
 
 import httpx
@@ -44,7 +42,7 @@ class WorkableClient:
         self._max_attempts = max_attempts
         self._client = httpx.Client(timeout=timeout, follow_redirects=True)
 
-    def __enter__(self) -> WorkableClient:
+    def __enter__(self) -> "WorkableClient":
         return self
 
     def __exit__(self, *_: object) -> None:
@@ -74,7 +72,8 @@ class WorkableClient:
             raise WorkableError(f"Exhausted retries for {url}") from exc
 
         try:
-            return response.json()
+            data: dict[str, Any] = response.json()
+            return data
         except ValueError as exc:
             body_preview = response.text[:500]
             log.error(

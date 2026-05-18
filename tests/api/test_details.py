@@ -1,4 +1,5 @@
 """Tests for POST /api/details."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -59,9 +60,7 @@ def test_updates_existing_posting_and_merges_raw_payload(
     }
 
 
-def test_skips_unknown_source_id(
-    client: TestClient, auth_headers: dict[str, str]
-) -> None:
+def test_skips_unknown_source_id(client: TestClient, auth_headers: dict[str, str]) -> None:
     body = {
         "source": "jjit",
         "details": [
