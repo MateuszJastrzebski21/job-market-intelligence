@@ -18,12 +18,26 @@ log = structlog.get_logger(__name__)
 DEFAULT_MODEL = "claude-opus-4-7"
 DEFAULT_MAX_TOKENS = 4096
 
+# A response is only trustworthy when the model finished normally. Any other
+# stop_reason (notably "refusal") means parsed_output may be non-conforming.
+_VALID_STOP_REASONS = frozenset({"end_turn", "stop_sequence"})
+
+
+class _RefusalError(Exception):
+    """Raised when a response stopped for a reason other than normal completion
+    (e.g. a refusal); its parsed_output must not be persisted. See ADR-0005."""
+
+    def __init__(self, stop_reason: str | None) -> None:
+        self.stop_reason = stop_reason
+        super().__init__(f"untrustworthy stop_reason: {stop_reason!r}")
+
 
 @dataclass
 class ExtractStats:
     inserted: int = 0
     skipped: int = 0
     invalid: int = 0
+    refused: int = 0
     failed_api_calls: int = 0
     cached_hits: int = 0
     total_input_tokens: int = 0
@@ -78,6 +92,9 @@ class AnthropicExtractor:
             messages=[{"role": "user", "content": user_content}],
             output_format=JobExtractSchema,
         )
+
+        if response.stop_reason not in _VALID_STOP_REASONS:
+            raise _RefusalError(response.stop_reason)
 
         parsed: JobExtractSchema = response.parsed_output
 
@@ -136,6 +153,16 @@ class AnthropicExtractor:
                 )
                 stats.invalid += 1
                 continue
+            except _RefusalError as exc:
+                log.warning(
+                    "extract.refused",
+                    source=posting.source,
+                    posting_id=str(posting.id),
+                    model=self.model,
+                    stop_reason=exc.stop_reason,
+                )
+                stats.refused += 1
+                continue
             except anthropic.APIError as exc:
                 log.error(
                     "extract.skip.api_error",
@@ -158,6 +185,7 @@ class AnthropicExtractor:
             inserted=stats.inserted,
             skipped=stats.skipped,
             invalid=stats.invalid,
+            refused=stats.refused,
             failed_api_calls=stats.failed_api_calls,
             cached_hits=stats.cached_hits,
             total_input_tokens=stats.total_input_tokens,

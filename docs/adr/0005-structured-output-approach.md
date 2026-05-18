@@ -75,3 +75,12 @@ Use **`client.messages.parse()` with a Pydantic `JobExtractSchema`** as the
 
 - Anthropic skill: `shared/tool-use-concepts.md` §Structured Outputs
 - Anthropic skill: `python/claude-api/tool-use.md` §JSON Outputs (Pydantic)
+
+## Implementation Note
+
+**2026-05-18 (#22):** The refusal gap flagged above under *Consequences →
+Negative* is now closed. `extract_one()` checks `response.stop_reason` before
+reading `parsed_output`; any value outside `{"end_turn", "stop_sequence"}`
+raises an internal `_RefusalError`. `run()` catches it, emits an
+`extract.refused` structured log event, and counts the posting under
+`ExtractStats.refused` — the non-conforming output is never persisted.
