@@ -124,7 +124,7 @@ class AnthropicExtractor:
         limit: int | None = None,
     ) -> ExtractStats:
         stats = ExtractStats()
-        postings = posting_repo.list(limit=limit or 1000)
+        postings = posting_repo.list_all(limit=limit or 1000)
 
         for posting in postings:
             if not posting.description_text:

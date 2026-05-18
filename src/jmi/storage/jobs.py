@@ -36,7 +36,7 @@ class JobPostingRepository:
         orm = self._session.execute(stmt).scalar_one_or_none()
         return _posting_to_domain(orm) if orm else None
 
-    def list(self, limit: int = 100, offset: int = 0) -> list[JobPosting]:
+    def list_all(self, limit: int = 100, offset: int = 0) -> list[JobPosting]:
         stmt = (
             select(JobPostingORM)
             .order_by(JobPostingORM.scraped_at.desc())
@@ -136,7 +136,7 @@ class JobExtractRepository:
         orm = self._session.get(JobExtractORM, id)
         return _extract_to_domain(orm) if orm else None
 
-    def list(self, limit: int = 100, offset: int = 0) -> list[JobExtract]:
+    def list_all(self, limit: int = 100, offset: int = 0) -> list[JobExtract]:
         stmt = (
             select(JobExtractORM)
             .order_by(JobExtractORM.extracted_at.desc())

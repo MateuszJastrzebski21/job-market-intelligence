@@ -75,7 +75,7 @@ class _InMemoryPostingRepo:
     def __init__(self, postings: list[JobPosting]) -> None:
         self._postings = postings
 
-    def list(self, limit: int = 100, offset: int = 0) -> list[JobPosting]:
+    def list_all(self, limit: int = 100, offset: int = 0) -> list[JobPosting]:
         return list(self._postings[:limit])
 
 

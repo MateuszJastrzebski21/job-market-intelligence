@@ -35,8 +35,8 @@ def _tech_stack_by_posting(
 ) -> dict[UUID, list[str]]:
     """Map each posting to the tech_stack of its most recent extract."""
     by_posting: dict[UUID, list[str]] = {}
-    # list() returns extracts newest-first, so the first seen per posting wins.
-    for extract in extract_repo.list(limit=10_000):
+    # list_all() returns extracts newest-first, so the first seen per posting wins.
+    for extract in extract_repo.list_all(limit=10_000):
         by_posting.setdefault(extract.job_posting_id, extract.tech_stack)
     return by_posting
 
