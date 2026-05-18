@@ -23,8 +23,7 @@ class JobExtractSchema(BaseModel):
     tech_stack: list[str] = Field(
         default_factory=list,
         description=(
-            "Canonical technology names the role uses day-to-day. "
-            "Deduplicated, max 20 entries."
+            "Canonical technology names the role uses day-to-day. Deduplicated, max 20 entries."
         ),
     )
     salary_min: int | None = Field(

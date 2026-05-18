@@ -3,6 +3,7 @@
 Same DB-free pattern as tests/cli/test_analyze.py: the CLI is invoked through
 CliRunner with get_session / the extractor monkeypatched to fail.
 """
+
 from __future__ import annotations
 
 from sqlalchemy.exc import OperationalError

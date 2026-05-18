@@ -1,4 +1,5 @@
 """Tests for ingest-schema size limits (Field max_length constraints)."""
+
 from __future__ import annotations
 
 from typing import Any

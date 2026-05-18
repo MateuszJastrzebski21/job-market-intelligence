@@ -4,6 +4,7 @@ Consistent with the rest of the test suite (tests/api/conftest.py), this uses
 in-memory fake repositories — no Postgres, no testcontainers. The real-DB path
 is covered by the manual smoke test (`uv run jmi evaluate`).
 """
+
 from __future__ import annotations
 
 import json
@@ -28,9 +29,7 @@ class FakeJobPostingRepository:
         self._by_source_key[(posting.source, posting.source_job_id)] = posting
         return posting
 
-    def get_by_source(
-        self, source: str, source_job_id: str
-    ) -> JobPosting | None:
+    def get_by_source(self, source: str, source_job_id: str) -> JobPosting | None:
         return self._by_source_key.get((source, source_job_id))
 
 

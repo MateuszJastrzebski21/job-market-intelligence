@@ -1,5 +1,6 @@
 """Clustering tests. Synthetic embeddings with a fixed RNG seed so KMeans is
 fully deterministic."""
+
 from __future__ import annotations
 
 from uuid import uuid4

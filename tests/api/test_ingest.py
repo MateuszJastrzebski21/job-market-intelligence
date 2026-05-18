@@ -1,4 +1,5 @@
 """Tests for POST /api/ingest."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -60,9 +61,7 @@ def test_accepted_indices_excludes_skipped_existing(
     assert out["accepted_indices"] == [1]  # only the fresh one
 
 
-def test_skips_existing_posting(
-    client: TestClient, auth_headers: dict[str, str]
-) -> None:
+def test_skips_existing_posting(client: TestClient, auth_headers: dict[str, str]) -> None:
     body = {"source": "jjit", "postings": [_posting_in("jjit-dup")]}
     first = client.post("/api/ingest", json=body, headers=auth_headers)
     assert first.json()["accepted"] == 1
@@ -80,9 +79,7 @@ def test_rejects_missing_token(client: TestClient) -> None:
 
 def test_rejects_wrong_token(client: TestClient) -> None:
     body = {"source": "jjit", "postings": [_posting_in()]}
-    response = client.post(
-        "/api/ingest", json=body, headers={"X-Ingest-Token": "nope"}
-    )
+    response = client.post("/api/ingest", json=body, headers={"X-Ingest-Token": "nope"})
     assert response.status_code == 401
 
 
@@ -94,9 +91,7 @@ def test_rejects_unknown_source_literal_via_pydantic(
     assert response.status_code == 422
 
 
-def test_accepts_all_widened_sources(
-    client: TestClient, auth_headers: dict[str, str]
-) -> None:
+def test_accepts_all_widened_sources(client: TestClient, auth_headers: dict[str, str]) -> None:
     """Source widening verification: jjit / nofluff / linkedin all accepted."""
     for source in ("jjit", "nofluff", "linkedin"):
         body = {

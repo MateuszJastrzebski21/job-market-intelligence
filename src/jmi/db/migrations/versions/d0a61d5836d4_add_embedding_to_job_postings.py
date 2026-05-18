@@ -12,6 +12,7 @@ separate analytics pass (`jmi analyze`, ADR-0011), not at ingest time. The
 is already installed by `docker/init.sql`; this keeps the migration runnable
 against a database created without that init script.
 """
+
 from collections.abc import Sequence
 
 import sqlalchemy as sa

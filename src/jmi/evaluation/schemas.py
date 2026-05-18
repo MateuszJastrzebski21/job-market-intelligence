@@ -5,6 +5,7 @@ hand-labelled job postings. Each entry pairs a posting with the values a
 perfect extractor should produce. These models validate that file and feed
 the evaluation runner.
 """
+
 from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter

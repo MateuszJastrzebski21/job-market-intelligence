@@ -65,9 +65,7 @@ class JobPostingRepository:
         orm.raw_payload = raw_payload
         self._session.flush()
 
-    def list_pending_details(
-        self, source: str, limit: int = 100
-    ) -> list[JobPosting]:
+    def list_pending_details(self, source: str, limit: int = 100) -> list[JobPosting]:
         """Postings for a given source that still need a detail-fetch.
 
         Ordered FIFO by scraped_at so the oldest listing-scrape backlog drains
@@ -155,9 +153,7 @@ class JobExtractRepository:
         )
         return [_extract_to_domain(o) for o in self._session.execute(stmt).scalars()]
 
-    def get_by_posting_and_model(
-        self, posting_id: UUID, model_name: str
-    ) -> JobExtract | None:
+    def get_by_posting_and_model(self, posting_id: UUID, model_name: str) -> JobExtract | None:
         stmt = select(JobExtractORM).where(
             JobExtractORM.job_posting_id == posting_id,
             JobExtractORM.model_name == model_name,

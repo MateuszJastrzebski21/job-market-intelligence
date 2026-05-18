@@ -24,9 +24,7 @@ def scraped_at() -> datetime:
 
 def test_maps_all_required_fields(workable_response: dict, scraped_at: datetime) -> None:
     job_dict = workable_response["jobs"][0]
-    posting = mapper.to_posting(
-        job_dict, company_name="Hugging Face", scraped_at=scraped_at
-    )
+    posting = mapper.to_posting(job_dict, company_name="Hugging Face", scraped_at=scraped_at)
 
     assert posting.source == "huggingface"
     assert posting.source_job_id == job_dict["shortcode"]
@@ -41,9 +39,7 @@ def test_description_html_preserved_and_text_extracted(
     workable_response: dict, scraped_at: datetime
 ) -> None:
     job_dict = workable_response["jobs"][0]
-    posting = mapper.to_posting(
-        job_dict, company_name="Hugging Face", scraped_at=scraped_at
-    )
+    posting = mapper.to_posting(job_dict, company_name="Hugging Face", scraped_at=scraped_at)
 
     assert "<" in posting.description_html
     assert "<" not in posting.description_text
@@ -53,17 +49,13 @@ def test_description_html_preserved_and_text_extracted(
 
 def test_published_on_parsed_to_utc_midnight(scraped_at: datetime) -> None:
     job_dict = _minimal_job(published_on="2026-03-15")
-    posting = mapper.to_posting(
-        job_dict, company_name="Acme", scraped_at=scraped_at
-    )
+    posting = mapper.to_posting(job_dict, company_name="Acme", scraped_at=scraped_at)
     assert posting.posted_at == datetime(2026, 3, 15, 0, 0, 0, tzinfo=UTC)
 
 
 def test_published_on_missing_becomes_none(scraped_at: datetime) -> None:
     job_dict = _minimal_job(published_on=None)
-    posting = mapper.to_posting(
-        job_dict, company_name="Acme", scraped_at=scraped_at
-    )
+    posting = mapper.to_posting(job_dict, company_name="Acme", scraped_at=scraped_at)
     assert posting.posted_at is None
 
 
@@ -72,17 +64,13 @@ def test_location_from_locations_array(scraped_at: datetime) -> None:
         locations=[{"country": "France", "city": "Paris", "countryCode": "FR"}],
         telecommuting=False,
     )
-    posting = mapper.to_posting(
-        job_dict, company_name="Acme", scraped_at=scraped_at
-    )
+    posting = mapper.to_posting(job_dict, company_name="Acme", scraped_at=scraped_at)
     assert posting.location_raw == "Paris, France"
 
 
 def test_location_remote_when_telecommuting_and_no_locations(scraped_at: datetime) -> None:
     job_dict = _minimal_job(locations=[], telecommuting=True)
-    posting = mapper.to_posting(
-        job_dict, company_name="Acme", scraped_at=scraped_at
-    )
+    posting = mapper.to_posting(job_dict, company_name="Acme", scraped_at=scraped_at)
     assert posting.location_raw == "Remote"
 
 

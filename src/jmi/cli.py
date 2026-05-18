@@ -24,13 +24,10 @@ _OUTPUT_OPTION = typer.Option(
     None,
     "--output",
     "-o",
-    help="Report path stem; writes {stem}.md and {stem}.html. "
-    "Default: docs/market-report-{today}.",
+    help="Report path stem; writes {stem}.md and {stem}.html. Default: docs/market-report-{today}.",
 )
 
-_DB_UNREACHABLE_MSG = (
-    "Cannot connect to database — is `docker compose up` running?"
-)
+_DB_UNREACHABLE_MSG = "Cannot connect to database — is `docker compose up` running?"
 
 
 @app.callback()
@@ -64,17 +61,13 @@ def scrape(
     except OperationalError as exc:
         typer.echo(_DB_UNREACHABLE_MSG, err=True)
         raise typer.Exit(1) from exc
-    typer.echo(
-        f"{stats.inserted} new, {stats.skipped} existing, {stats.invalid} invalid"
-    )
+    typer.echo(f"{stats.inserted} new, {stats.skipped} existing, {stats.invalid} invalid")
 
 
 @app.command()
 def extract(
     limit: int | None = typer.Option(None, "--limit", "-n", help="Max postings to extract."),
-    model: str = typer.Option(
-        "claude-opus-4-7", "--model", "-m", help="Anthropic model ID."
-    ),
+    model: str = typer.Option("claude-opus-4-7", "--model", "-m", help="Anthropic model ID."),
 ) -> None:
     """Run LLM extraction on postings without an extract for the given model."""
     from sqlalchemy.exc import OperationalError
@@ -108,9 +101,7 @@ def extract(
         f"written {stats.total_cache_creation_tokens} / "
         f"read {stats.total_cache_read_tokens} tokens"
     )
-    typer.echo(
-        f"tokens: {stats.total_input_tokens} input, {stats.total_output_tokens} output"
-    )
+    typer.echo(f"tokens: {stats.total_input_tokens} input, {stats.total_output_tokens} output")
 
 
 @app.command()
@@ -119,9 +110,7 @@ def evaluate(
     source: str | None = typer.Option(
         None, "--source", "-s", help="Restrict evaluation to one source."
     ),
-    output: str = typer.Option(
-        "text", "--output", "-o", help="Output format: text or json."
-    ),
+    output: str = typer.Option("text", "--output", "-o", help="Output format: text or json."),
     show_unmatched: bool = typer.Option(
         False, "--show-unmatched", help="List labels that could not be evaluated."
     ),
@@ -190,12 +179,8 @@ def analyze(
         typer.echo(f"analyze failed: {exc}", err=True)
         raise typer.Exit(1) from exc
 
-    markdown = generate_markdown_report(
-        bundle.cluster_result, bundle.jobs, report_date=report_date
-    )
-    html_report = generate_html_report(
-        bundle.cluster_result, bundle.jobs, report_date=report_date
-    )
+    markdown = generate_markdown_report(bundle.cluster_result, bundle.jobs, report_date=report_date)
+    html_report = generate_html_report(bundle.cluster_result, bundle.jobs, report_date=report_date)
 
     md_path = Path(f"{stem}.md")
     html_path = Path(f"{stem}.html")
@@ -204,10 +189,7 @@ def analyze(
     html_path.write_text(html_report, encoding="utf-8")
 
     result = bundle.cluster_result
-    typer.echo(
-        f"{len(bundle.jobs)} postings, k={result.k}, "
-        f"silhouette={result.silhouette:.2f}"
-    )
+    typer.echo(f"{len(bundle.jobs)} postings, k={result.k}, silhouette={result.silhouette:.2f}")
     typer.echo(f"wrote {md_path}")
     typer.echo(f"wrote {html_path}")
 
@@ -230,9 +212,7 @@ def init_db() -> None:
 def serve(
     host: str = typer.Option("127.0.0.1", "--host", help="Bind host."),
     port: int = typer.Option(8000, "--port", help="Bind port."),
-    reload: bool = typer.Option(
-        False, "--reload", help="Reload on code changes (dev only)."
-    ),
+    reload: bool = typer.Option(False, "--reload", help="Reload on code changes (dev only)."),
 ) -> None:
     """Start the FastAPI ingest endpoint server."""
     import uvicorn

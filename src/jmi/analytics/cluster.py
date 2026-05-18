@@ -89,6 +89,4 @@ def cluster_postings(
     else:
         log.info("clustering complete", **fields)
 
-    return ClusterResult(
-        k=k, n_samples=n_samples, silhouette=silhouette, clusters=clusters
-    )
+    return ClusterResult(k=k, n_samples=n_samples, silhouette=silhouette, clusters=clusters)

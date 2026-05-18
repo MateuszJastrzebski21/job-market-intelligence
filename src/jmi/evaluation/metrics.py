@@ -3,6 +3,7 @@
 Pure functions, no I/O. Each compares one extracted field against its
 ground-truth label. Argument order is always ``(actual, expected)``.
 """
+
 from __future__ import annotations
 
 
@@ -33,9 +34,7 @@ def jaccard_similarity(actual: list[str], expected: list[str]) -> float:
     return len(actual_set & expected_set) / len(union)
 
 
-def numeric_match_or_both_null(
-    actual: int | None, expected: int | None
-) -> bool:
+def numeric_match_or_both_null(actual: int | None, expected: int | None) -> bool:
     """Exact integer equality, or both ``None``.
 
     Used for years_experience_min, where no tolerance applies.

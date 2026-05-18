@@ -30,9 +30,7 @@ def configure_logging(*, json: bool = False, level: str = "INFO") -> None:
     ]
 
     renderer: structlog.types.Processor = (
-        structlog.processors.JSONRenderer()
-        if json
-        else structlog.dev.ConsoleRenderer(colors=True)
+        structlog.processors.JSONRenderer() if json else structlog.dev.ConsoleRenderer(colors=True)
     )
 
     structlog.configure(

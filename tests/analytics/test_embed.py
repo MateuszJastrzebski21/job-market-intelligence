@@ -1,5 +1,6 @@
 """Embedder tests. The sentence-transformers model is faked throughout — no
 torch, no model download in CI."""
+
 from __future__ import annotations
 
 import numpy as np

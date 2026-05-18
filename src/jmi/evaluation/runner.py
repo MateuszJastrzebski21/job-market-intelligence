@@ -3,6 +3,7 @@
 The functions here take repository objects (not a Session) so they can be
 unit-tested against in-memory fakes — see ADR-0010 and tests/evaluation/.
 """
+
 from __future__ import annotations
 
 import statistics
@@ -40,9 +41,7 @@ log = structlog.get_logger(__name__)
 class PostingFinder(Protocol):
     """The slice of JobPostingRepository the runner needs."""
 
-    def get_by_source(
-        self, source: str, source_job_id: str
-    ) -> JobPosting | None: ...
+    def get_by_source(self, source: str, source_job_id: str) -> JobPosting | None: ...
 
 
 class ExtractLister(Protocol):
@@ -106,11 +105,7 @@ def evaluate_entry(
 
     yexp, yact = expected.years_experience_min, extract.years_experience_min
     ymatch = numeric_match_or_both_null(yact, yexp)
-    fields.append(
-        FieldResult(
-            "years_experience_min", yexp, yact, 1.0 if ymatch else 0.0, ymatch
-        )
-    )
+    fields.append(FieldResult("years_experience_min", yexp, yact, 1.0 if ymatch else 0.0, ymatch))
 
     ts_score = jaccard_similarity(extract.tech_stack, expected.tech_stack)
     fields.append(
@@ -241,9 +236,7 @@ def _salary_stats(
                 currency_match += 1
 
         label_has_salary = exp.salary_min is not None or exp.salary_max is not None
-        extract_has_salary = (
-            extract.salary_min is not None or extract.salary_max is not None
-        )
+        extract_has_salary = extract.salary_min is not None or extract.salary_max is not None
         if label_has_salary and extract_has_salary:
             if extract.salary_currency == exp.salary_currency:
                 correct_currency += 1
@@ -259,9 +252,7 @@ def _salary_stats(
         max_recall=(max_captured / max_label) if max_label else None,
         currency_total=currency_total,
         currency_match_count=currency_match,
-        currency_match_rate=(
-            currency_match / currency_total if currency_total else None
-        ),
+        currency_match_rate=(currency_match / currency_total if currency_total else None),
         salary_with_correct_currency=correct_currency,
         salary_with_wrong_currency=wrong_currency,
     )

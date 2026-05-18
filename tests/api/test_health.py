@@ -1,4 +1,5 @@
 """Tests for GET /api/health."""
+
 from __future__ import annotations
 
 from fastapi.testclient import TestClient

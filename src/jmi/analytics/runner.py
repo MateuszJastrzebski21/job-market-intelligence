@@ -58,8 +58,7 @@ def run_analysis(
         pairs = posting_repo.list_with_embeddings()
         if not pairs:
             raise ValueError(
-                "no stored embeddings found — run `jmi analyze` without "
-                "--skip-embed first"
+                "no stored embeddings found — run `jmi analyze` without --skip-embed first"
             )
         postings = [posting for posting, _ in pairs]
         embeddings = np.array([vector for _, vector in pairs], dtype=np.float32)

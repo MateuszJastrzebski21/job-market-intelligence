@@ -9,6 +9,7 @@ Required by the HITL ingest flow (PR3+): listing-page rows are created with
 NULL descriptions, then filled in by the background detail fetcher.
 Downgrade reverses the change but will fail if any rows hold NULL values.
 """
+
 from typing import Sequence, Union
 
 import sqlalchemy as sa

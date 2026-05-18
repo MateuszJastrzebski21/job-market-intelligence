@@ -11,6 +11,7 @@ For live dev databases that already have these tables, run
 re-executing DDL. Fresh databases run `alembic upgrade head` to create
 the schema from scratch.
 """
+
 from typing import Sequence, Union
 
 import sqlalchemy as sa

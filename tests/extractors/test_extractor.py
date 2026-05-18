@@ -84,9 +84,7 @@ class _InMemoryExtractRepo:
         self._existing = existing or {}
         self.added: list[JobExtract] = []
 
-    def get_by_posting_and_model(
-        self, posting_id: UUID, model_name: str
-    ) -> JobExtract | None:
+    def get_by_posting_and_model(self, posting_id: UUID, model_name: str) -> JobExtract | None:
         return self._existing.get((posting_id, model_name))
 
     def add(self, extract: JobExtract) -> JobExtract:
@@ -176,9 +174,7 @@ def test_pydantic_validation_error_skips_job_not_fatal() -> None:
     client = _FakeClient(response_factory)
     extractor = AnthropicExtractor(client=client, model="claude-opus-4-7")  # type: ignore[arg-type]
 
-    stats = extractor.run(
-        _InMemoryPostingRepo([p1, p2, p3]), _InMemoryExtractRepo()
-    )  # type: ignore[arg-type]
+    stats = extractor.run(_InMemoryPostingRepo([p1, p2, p3]), _InMemoryExtractRepo())  # type: ignore[arg-type]
 
     assert stats.inserted == 2
     assert stats.invalid == 1
@@ -200,9 +196,7 @@ def test_anthropic_api_error_skips_job_not_fatal() -> None:
     client = _FakeClient(response_factory)
     extractor = AnthropicExtractor(client=client, model="claude-opus-4-7")  # type: ignore[arg-type]
 
-    stats = extractor.run(
-        _InMemoryPostingRepo([p1, p2]), _InMemoryExtractRepo()
-    )  # type: ignore[arg-type]
+    stats = extractor.run(_InMemoryPostingRepo([p1, p2]), _InMemoryExtractRepo())  # type: ignore[arg-type]
 
     assert stats.inserted == 1
     assert stats.failed_api_calls == 1
@@ -252,9 +246,7 @@ def test_run_skips_postings_with_empty_description() -> None:
     client = _FakeClient(lambda _k: _make_response(parsed))
     extractor = AnthropicExtractor(client=client, model="claude-opus-4-7")  # type: ignore[arg-type]
 
-    stats = extractor.run(
-        _InMemoryPostingRepo([p_empty]), _InMemoryExtractRepo()
-    )  # type: ignore[arg-type]
+    stats = extractor.run(_InMemoryPostingRepo([p_empty]), _InMemoryExtractRepo())  # type: ignore[arg-type]
 
     assert stats.skipped == 1
     assert stats.inserted == 0
@@ -276,9 +268,7 @@ def test_stats_accumulate_tokens_and_cache_hits() -> None:
     client = _FakeClient(response_factory)
     extractor = AnthropicExtractor(client=client, model="claude-opus-4-7")  # type: ignore[arg-type]
 
-    stats = extractor.run(
-        _InMemoryPostingRepo([p1, p2]), _InMemoryExtractRepo()
-    )  # type: ignore[arg-type]
+    stats = extractor.run(_InMemoryPostingRepo([p1, p2]), _InMemoryExtractRepo())  # type: ignore[arg-type]
 
     assert stats.inserted == 2
     assert stats.cached_hits == 1
@@ -296,9 +286,7 @@ def test_refusal_skipped() -> None:
 
     extract_repo = _InMemoryExtractRepo()
     with capture_logs() as logs:
-        stats = extractor.run(
-            _InMemoryPostingRepo([posting]), extract_repo
-        )  # type: ignore[arg-type]
+        stats = extractor.run(_InMemoryPostingRepo([posting]), extract_repo)  # type: ignore[arg-type]
 
     assert stats.refused == 1
     assert stats.inserted == 0
