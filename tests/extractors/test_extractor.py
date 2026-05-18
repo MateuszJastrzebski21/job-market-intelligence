@@ -6,6 +6,7 @@ from uuid import UUID
 
 import anthropic
 from pydantic import ValidationError
+from structlog.testing import capture_logs
 
 from jmi.extractors import AnthropicExtractor
 from jmi.extractors.schema import JobExtractSchema
@@ -49,13 +50,14 @@ def _make_response(
     output_tokens: int = 200,
     cache_read: int = 0,
     cache_creation: int = 0,
+    stop_reason: str = "end_turn",
 ) -> SimpleNamespace:
     raw = {
         "id": "msg_test",
         "type": "message",
         "role": "assistant",
         "model": model,
-        "stop_reason": "end_turn",
+        "stop_reason": stop_reason,
         "content": [{"type": "text", "text": schema_instance.model_dump_json()}],
         "usage": {
             "input_tokens": input_tokens,
@@ -64,7 +66,7 @@ def _make_response(
             "cache_creation_input_tokens": cache_creation,
         },
     }
-    response = SimpleNamespace(parsed_output=schema_instance)
+    response = SimpleNamespace(parsed_output=schema_instance, stop_reason=stop_reason)
     response.model_dump = lambda **_kwargs: raw
     return response
 
@@ -282,3 +284,23 @@ def test_stats_accumulate_tokens_and_cache_hits() -> None:
     assert stats.cached_hits == 1
     assert stats.total_cache_creation_tokens == 4500
     assert stats.total_cache_read_tokens == 4500
+
+
+def test_refusal_skipped() -> None:
+    """A response whose stop_reason indicates a refusal is logged as
+    'extract.refused', counted, and skipped — no JobExtract is persisted."""
+    posting = _make_posting()
+    parsed = JobExtractSchema(seniority="senior")
+    client = _FakeClient(lambda _k: _make_response(parsed, stop_reason="refusal"))
+    extractor = AnthropicExtractor(client=client, model="claude-opus-4-7")  # type: ignore[arg-type]
+
+    extract_repo = _InMemoryExtractRepo()
+    with capture_logs() as logs:
+        stats = extractor.run(
+            _InMemoryPostingRepo([posting]), extract_repo
+        )  # type: ignore[arg-type]
+
+    assert stats.refused == 1
+    assert stats.inserted == 0
+    assert extract_repo.added == []
+    assert any(entry["event"] == "extract.refused" for entry in logs)
