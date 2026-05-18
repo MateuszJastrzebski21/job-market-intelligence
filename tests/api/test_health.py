@@ -22,10 +22,11 @@ def test_health_requires_no_token(client: TestClient) -> None:
 
 
 def test_health_returns_db_ok_false_when_check_fails(client: TestClient) -> None:
-    """A failed DB probe must NOT 500 — the popup needs a stable signal."""
+    """A failed DB probe returns 503 (so monitoring can alert) but still carries
+    the structured db_ok=False signal the extension popup reads."""
     client.app.dependency_overrides[health_db_check] = lambda: False
     response = client.get("/api/health")
-    assert response.status_code == 200
+    assert response.status_code == 503
     body = response.json()
     assert body["status"] == "ok"
     assert body["db_ok"] is False
