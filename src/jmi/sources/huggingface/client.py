@@ -74,7 +74,8 @@ class WorkableClient:
             raise WorkableError(f"Exhausted retries for {url}") from exc
 
         try:
-            return response.json()
+            data: dict[str, Any] = response.json()
+            return data
         except ValueError as exc:
             body_preview = response.text[:500]
             log.error(

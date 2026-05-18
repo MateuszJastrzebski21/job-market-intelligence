@@ -182,9 +182,9 @@ def _posting_to_orm(p: JobPosting) -> JobPostingORM:
 def _posting_to_domain(o: JobPostingORM) -> JobPosting:
     return JobPosting(
         id=o.id,
-        source=o.source,  # type: ignore[arg-type]
+        source=o.source,
         source_job_id=o.source_job_id,
-        url=o.url,  # type: ignore[arg-type]
+        url=o.url,
         title=o.title,
         company_name=o.company_name,
         location_raw=o.location_raw,
@@ -218,14 +218,14 @@ def _extract_to_domain(o: JobExtractORM) -> JobExtract:
     return JobExtract(
         id=o.id,
         job_posting_id=o.job_posting_id,
-        seniority=o.seniority,  # type: ignore[arg-type]
+        seniority=o.seniority,
         tech_stack=list(o.tech_stack),
         salary_min=o.salary_min,
         salary_max=o.salary_max,
         salary_currency=o.salary_currency,
-        remote_policy=o.remote_policy,  # type: ignore[arg-type]
+        remote_policy=o.remote_policy,
         years_experience_min=o.years_experience_min,
-        employment_type=o.employment_type,  # type: ignore[arg-type]
+        employment_type=o.employment_type,
         model_name=o.model_name,
         raw_llm_response=o.raw_llm_response,
         extracted_at=o.extracted_at,
