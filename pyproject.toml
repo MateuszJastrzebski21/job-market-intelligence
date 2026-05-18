@@ -70,7 +70,8 @@ addopts = ["-ra", "--strict-markers", "--strict-config"]
 
 [tool.mypy]
 python_version = "3.12"
-strict = false
+strict = true
+plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
 module = ["sklearn.*", "pgvector.*"]
