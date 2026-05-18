@@ -72,6 +72,8 @@ class AnthropicExtractor:
         self._system_prompt = build_system_prompt()
 
     def extract_one(self, posting: JobPosting) -> JobExtract:
+        if posting.description_text is None:
+            raise ValueError(f"posting {posting.id} has no description_text; nothing to extract")
         user_content = format_user_message(
             title=posting.title,
             company_name=posting.company_name,
