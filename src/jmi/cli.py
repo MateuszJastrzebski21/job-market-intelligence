@@ -25,6 +25,12 @@ _OUTPUT_OPTION = typer.Option(
     help="Report path stem; writes {stem}.md and {stem}.html. Default: docs/market-report-{today}.",
 )
 
+_VAULT_PATH_OPTION = typer.Option(
+    None,
+    "--vault-path",
+    help="Obsidian vault root. Defaults to the ACHIEVEMENTS_VAULT_PATH setting.",
+)
+
 _DB_UNREACHABLE_MSG = "Cannot connect to database — is `docker compose up` running?"
 
 
@@ -190,6 +196,42 @@ def analyze(
     typer.echo(f"{len(bundle.jobs)} postings, k={result.k}, silhouette={result.silhouette:.2f}")
     typer.echo(f"wrote {md_path}")
     typer.echo(f"wrote {html_path}")
+
+
+@app.command("ingest-achievements")
+def ingest_achievements(
+    vault_path: Path | None = _VAULT_PATH_OPTION,
+) -> None:
+    """Ingest achievement Markdown files from an Obsidian vault into the database."""
+    from sqlalchemy.exc import OperationalError
+
+    from jmi.db.base import get_session
+    from jmi.sources.obsidian import ingest_vault
+    from jmi.storage.achievements import AchievementRepository
+
+    root = vault_path
+    if root is None:
+        configured = get_settings().achievements_vault_path
+        if configured is None:
+            typer.echo("No vault path: pass --vault-path or set ACHIEVEMENTS_VAULT_PATH.", err=True)
+            raise typer.Exit(1)
+        root = Path(configured)
+    if not root.is_dir():
+        typer.echo(f"Vault path is not a directory: {root}", err=True)
+        raise typer.Exit(1)
+
+    try:
+        with get_session() as session:
+            repo = AchievementRepository(session)
+            stats = ingest_vault(repo, root)
+    except OperationalError as exc:
+        typer.echo(_DB_UNREACHABLE_MSG, err=True)
+        raise typer.Exit(1) from exc
+
+    typer.echo(
+        f"{stats.inserted} new, {stats.updated} updated, {stats.skipped} skipped, "
+        f"{stats.invalid} invalid, {stats.rejected} rejected"
+    )
 
 
 @app.command("init-db")

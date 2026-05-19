@@ -216,8 +216,9 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# Local DB backups (do not commit)
+# Local DB backups — incl. Phase 3 personal-achievement data; never commit (ADR-0014 / S-3)
 backup-*.sql
+*.dump
 
 # Node tooling for the extension/ vitest test harness (PR5+)
 extension/node_modules/

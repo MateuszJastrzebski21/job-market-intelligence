@@ -60,3 +60,59 @@ class JobExtractORM(Base):
     extracted_at: Mapped[datetime] = mapped_column(nullable=False, index=True)
 
     posting: Mapped[JobPostingORM] = relationship(back_populates="extracts")
+
+
+class AchievementORM(Base):
+    """Personal career achievement — content + metadata. A table separate from the
+    job tables so personal data is purgeable independently (ADR-0014, S-3)."""
+
+    __tablename__ = "achievements"
+    __table_args__ = (
+        UniqueConstraint("slug", name="uq_achievements_slug"),
+        UniqueConstraint("source_path", name="uq_achievements_source_path"),
+    )
+
+    id: Mapped[UUID] = mapped_column(PgUUID(as_uuid=True), primary_key=True, default=uuid4)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    slug: Mapped[str] = mapped_column(String(200), nullable=False)
+    source_path: Mapped[str] = mapped_column(String(1024), nullable=False)
+    skills: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    tech_stack: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    seniority_relevance: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    impact_metrics: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    keywords: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    context: Mapped[str] = mapped_column(nullable=False)
+    approach: Mapped[str] = mapped_column(nullable=False)
+    impact: Mapped[str] = mapped_column(nullable=False)
+    lessons: Mapped[str] = mapped_column(nullable=False)
+    created_at: Mapped[datetime] = mapped_column(nullable=False, index=True)
+    updated_at: Mapped[datetime] = mapped_column(nullable=False)
+
+    embeddings: Mapped[list["AchievementEmbeddingORM"]] = relationship(
+        back_populates="achievement",
+        cascade="all, delete-orphan",
+    )
+
+
+class AchievementEmbeddingORM(Base):
+    """Chunk-level embedding of an achievement. Created empty by PR-3.1; the
+    chunking + embedding pass that populates it lands in PR-3.2 (ADR-0014)."""
+
+    __tablename__ = "achievement_embeddings"
+    __table_args__ = (
+        UniqueConstraint("achievement_id", "chunk_index", name="uq_achievement_embeddings_chunk"),
+    )
+
+    id: Mapped[UUID] = mapped_column(PgUUID(as_uuid=True), primary_key=True, default=uuid4)
+    achievement_id: Mapped[UUID] = mapped_column(
+        PgUUID(as_uuid=True),
+        ForeignKey("achievements.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    chunk_index: Mapped[int] = mapped_column(nullable=False)
+    chunk_text: Mapped[str] = mapped_column(nullable=False)
+    embedding: Mapped[list[float] | None] = mapped_column(Vector(384), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(nullable=False)
+
+    achievement: Mapped[AchievementORM] = relationship(back_populates="embeddings")

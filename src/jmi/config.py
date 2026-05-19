@@ -25,6 +25,7 @@ class Settings(LoggingSettings):
     database_url: str = Field(default="", alias="DATABASE_URL")
     anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
     ingest_token: str | None = Field(default=None, alias="JMI_INGEST_TOKEN")
+    achievements_vault_path: str | None = Field(default=None, alias="ACHIEVEMENTS_VAULT_PATH")
 
     @field_validator("database_url")
     @classmethod
