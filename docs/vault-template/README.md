@@ -2,8 +2,9 @@
 
 This folder is a **template** for the personal-achievement corpus that the
 Phase 3 RAG résumé generator retrieves from. It is not real data: the six files
-under `_meta/career/achievements/` are AI-drafted starting points for you to
-edit into accurate achievements.
+under `_meta/career/achievements/` are generic **example shapes**, one per
+common kind of achievement, for you to copy and rewrite with your own career
+history.
 
 ## What this is
 
@@ -13,14 +14,28 @@ parses these files into Postgres (the `achievements` table). See
 [ADR-0014](../adr/0014-achievement-domain-schema.md) for the schema rationale
 and `src/jmi/models/achievement.py` for the authoritative field definitions.
 
+## The example files
+
+Six samples ship here, each a different shape of achievement:
+
+- `backend-service-production.md` — a backend system run in production.
+- `data-pipeline-batch.md` — an ETL or batch data pipeline.
+- `open-source-contribution.md` — a non-trivial open-source contribution.
+- `university-capstone.md` — a university software-engineering project.
+- `hackathon-project.md` — a time-boxed hackathon build.
+- `jmi-flagship-project.md` — JMI itself, as an example of a portfolio project.
+
+None of them describe a real person. Use them as starting shapes: rewrite the
+ones that fit your history, and delete the ones that do not.
+
 ## How to use it
 
 1. Copy `_meta/career/achievements/` into your real Obsidian vault — anywhere;
    ingestion finds achievement files by frontmatter, not by location.
-2. Edit each file: replace every `[TODO: ...]` placeholder with real, specific
-   detail. The drafts are roughly 80% plausible scaffolding and 20%
-   placeholders — treat the non-`TODO` text as a suggestion, not as fact, and
-   correct anything that is wrong.
+2. Edit each file into a real achievement: replace every `[TODO: ...]`
+   placeholder with specific detail, and rewrite the generic scaffolding
+   sentences to describe what you actually did. The samples carry no real
+   facts — they only demonstrate the shape of each section.
 3. Point JMI at your vault, either with the `ACHIEVEMENTS_VAULT_PATH`
    environment variable or per run:
    `jmi ingest-achievements --vault-path /path/to/vault`.
