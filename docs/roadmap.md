@@ -76,8 +76,8 @@ markdown report.
 
 - Achievement database: 15-20 markdown files in personal Obsidian Career/ vault. User
   writes these manually (NOT scrapped, NOT generated).
-- Examples needed: backend Java commercial work, JMI project itself, volatility surface
-  portfolio, IMC Prosperity 4, data science club
+- Examples needed: production work experience, a portfolio project, a quantitative or
+  analytical project, a competition entry, a community/club involvement
 - Eval ground truth: ~10 jobs with manually crafted "ideal CV" for measurement
 
 **Senior signals demonstrated:**

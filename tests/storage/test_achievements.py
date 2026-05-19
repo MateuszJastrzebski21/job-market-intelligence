@@ -16,13 +16,13 @@ from jmi.storage.achievements import _achievement_to_domain, _achievement_to_orm
 
 def _make_achievement(**overrides: object) -> Achievement:
     defaults: dict[str, object] = {
-        "title": "Volatility Surface Construction",
+        "title": "Backend Service Project",
         "source_path": Path("_meta/career/achievements/vol.md"),
         "skills": ["quant", "modelling"],
         "tech_stack": ["Python", "NumPy"],
         "seniority_relevance": ["junior", "mid"],
         "impact_metrics": ["featured by a YouTube channel"],
-        "keywords": ["volatility", "options"],
+        "keywords": ["backend", "api"],
         "context": "ctx",
         "approach": "app",
         "impact": "imp",

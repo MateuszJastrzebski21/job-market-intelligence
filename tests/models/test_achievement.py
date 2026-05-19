@@ -31,7 +31,7 @@ def test_slugify_strips_polish_diacritics() -> None:
 
 
 def test_slugify_collapses_punctuation() -> None:
-    assert slugify("IMC Prosperity 4 — Agentic Loop!") == "imc-prosperity-4-agentic-loop"
+    assert slugify("Kraków — Project's Café & Co.!") == "krakow-project-s-cafe-co"
 
 
 def test_slug_cannot_be_passed_to_constructor() -> None:

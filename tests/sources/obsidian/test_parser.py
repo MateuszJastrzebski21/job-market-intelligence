@@ -10,7 +10,7 @@ from jmi.sources.obsidian.parser import AchievementParseError, to_achievement
 _VALID = """\
 ---
 type: achievement
-title: IMC Prosperity 4
+title: Sample Achievement Title
 skills:
   - trading
 tech_stack:
@@ -48,7 +48,7 @@ def _path() -> Path:
 def test_parses_a_valid_achievement() -> None:
     achievement = to_achievement(_VALID, source_path=_path())
     assert achievement is not None
-    assert achievement.title == "IMC Prosperity 4"
+    assert achievement.title == "Sample Achievement Title"
     assert achievement.skills == ["trading"]
     assert achievement.tech_stack == ["Python"]
     assert achievement.seniority_relevance == ["junior"]
