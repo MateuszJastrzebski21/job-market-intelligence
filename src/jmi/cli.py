@@ -3,7 +3,7 @@ from pathlib import Path
 
 import typer
 
-from jmi.config import get_settings
+from jmi.config import get_logging_settings, get_settings
 from jmi.logging import configure_logging
 
 app = typer.Typer(
@@ -31,7 +31,7 @@ _DB_UNREACHABLE_MSG = "Cannot connect to database — is `docker compose up` run
 @app.callback()
 def main() -> None:
     """Configure logging once per process using env-driven settings."""
-    settings = get_settings()
+    settings = get_logging_settings()
     configure_logging(json=settings.log_json, level=settings.log_level)
 
 
