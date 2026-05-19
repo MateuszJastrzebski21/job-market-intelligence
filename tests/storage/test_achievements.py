@@ -21,7 +21,7 @@ def _make_achievement(**overrides: object) -> Achievement:
         "skills": ["quant", "modelling"],
         "tech_stack": ["Python", "NumPy"],
         "seniority_relevance": ["junior", "mid"],
-        "impact_metrics": ["featured by a YouTube channel"],
+        "impact_metrics": ["scaled to ~10k requests/day", "p99 latency under 200ms"],
         "keywords": ["backend", "api"],
         "context": "ctx",
         "approach": "app",
