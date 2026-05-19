@@ -18,8 +18,9 @@ startup within 6-12 weeks of focused execution.
 
 - Phase 1: 95% done (3 portals: HF + JJIT + NFJ, all HITL/API ToS-clean)
 - Phase 2: PoC merged (PR #20) — embeddings + clustering + market report
-- Phase 3: next (RAG résumé generator); Phase 4-5: 0%
-- Tests: 80 pytest + 89 vitest = 169 green
+- Phase 3: next (RAG résumé generator) — design constraints documented
+  (`docs/phase3-design-constraints.md`); Phase 4-5: 0%
+- Tests: 117 pytest + 89 vitest = 206 green
 - Coverage: ~57 jobs ingested on PC, ~18 on Mac (per-machine DBs)
 - Velocity vs plan: 2x ahead
 
