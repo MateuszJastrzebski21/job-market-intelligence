@@ -60,7 +60,7 @@ HTTP 503 when the DB check fails (`api/routes/health.py`). Closed by #55.
 `src/jmi/storage/base.py` (the unused `AbstractRepository`) is deleted. Canonical
 pattern settled: concrete repository classes in `storage/`, Protocol-narrowed
 slices at injection boundaries in `evaluation/runner.py` (documented, per
-ADR-0010). Closed by #56.
+ADR-0012). Closed by #56.
 
 ### H6 — Stale docs — VERIFIED (closed)
 `CLAUDE.md` no longer says "JustJoinIT OFF the table" — it describes JJIT as an
