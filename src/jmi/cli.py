@@ -289,6 +289,44 @@ def rag_embed(
     )
 
 
+@app.command("rag-query")
+def rag_query(
+    query: str = typer.Argument(..., help="Query text — typically a JD snippet or role."),
+    k: int = typer.Option(5, "--k", help="Top-K chunks to return after the final stage."),
+    no_rerank: bool = typer.Option(
+        False, "--no-rerank", help="Skip the cross-encoder reranker — embedding order only."
+    ),
+) -> None:
+    """Run the custom RAG pipeline and print the top-K chunks (PR-3.2, T6)."""
+    from sqlalchemy.exc import OperationalError
+
+    from jmi.db.base import get_session
+    from jmi.rag.embedding import CustomEmbedder
+    from jmi.rag.pipeline import RagPipeline
+    from jmi.rag.reranking import CustomReranker
+    from jmi.rag.retrieval import CustomRetriever
+
+    if k <= 0:
+        typer.echo("--k must be positive", err=True)
+        raise typer.Exit(1)
+
+    retriever = CustomRetriever(CustomEmbedder())
+    reranker = None if no_rerank else CustomReranker()
+    pipeline = RagPipeline(retriever, reranker)
+    try:
+        with get_session() as session:
+            results = pipeline.retrieve_top_k(session, query, k=k)
+    except OperationalError as exc:
+        typer.echo(_DB_UNREACHABLE_MSG, err=True)
+        raise typer.Exit(1) from exc
+
+    stage = "rerank" if pipeline.has_reranker else "bi-encoder"
+    typer.echo(f"top-{k} via {stage}:")
+    for i, c in enumerate(results, start=1):
+        first_line = c.chunk_text.splitlines()[0]
+        typer.echo(f"  {i}. score={c.score:.4f} | {first_line}")
+
+
 @app.command("init-db")
 def init_db() -> None:
     """Upgrade the database schema to the latest Alembic head."""

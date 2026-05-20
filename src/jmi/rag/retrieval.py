@@ -93,6 +93,11 @@ class CustomRetriever:
                     score=float(1.0 - float(distance)),
                 )
             )
+        # The SQL ``LIMIT :k`` enforces the cap at the DB; this Python-side
+        # slice is defensive — it guarantees the contract even if a future
+        # refactor drops the LIMIT, and makes the function trivially testable
+        # with stub sessions that do not implement LIMIT semantics.
+        results = results[:k]
         log.info(
             "rag.retrieve.done",
             k=k,
