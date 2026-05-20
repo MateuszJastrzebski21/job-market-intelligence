@@ -10,7 +10,7 @@
         "red-ocean-junior-java-developer::approach",
         "red-ocean-junior-java-developer::impact"
       ],
-      "notes": "Targets the Red Ocean role explicitly — Java 8 + Spring + JPA/Hibernate + Postgres. context/approach/impact carry the stack and production-defect-fix story. lessons is reflective and intentionally left out — recall@k punishes adding it only if the retriever doesn't return it. Single-achievement query."
+      "notes": "Targets the single-employer Java/Spring backend project — Java 8 + Spring + JPA/Hibernate + Postgres stack with a production-defect-fix story. context/approach/impact carry the stack detail. lessons is reflective and intentionally left out — recall@k punishes adding it only if the retriever doesn't return it. Single-achievement query."
     },
     {
       "id": "single-quant-options",
@@ -21,7 +21,7 @@
         "volatility-surface-coding-jesus-feature::approach",
         "volatility-surface-coding-jesus-feature::impact"
       ],
-      "notes": "Squarely the SPY volatility-surface project. Approach holds the numerical-methods detail (Newton iteration, no-arbitrage smoothing if present); impact holds the Coding Jesus feature. Single-achievement."
+      "notes": "Squarely the options-pricing visualization project. Approach holds the numerical-methods detail (Newton iteration, no-arbitrage smoothing if present); impact holds the external recognition of the quant project. Single-achievement."
     },
     {
       "id": "single-llm-agent",
@@ -32,7 +32,7 @@
         "imc-prosperity-4-agentic-autoresearch::approach",
         "imc-prosperity-4-agentic-autoresearch::impact"
       ],
-      "notes": "IMC Prosperity 4 is the only achievement framed around an agentic loop. Approach is where the Karpathy-pattern adaptation lives; impact carries the PnL and the reverse-engineered submission API. Single-achievement."
+      "notes": "The agentic trading-competition entry is the only achievement framed around an agentic loop. Approach is where the Karpathy-pattern adaptation lives; impact carries the PnL and the reverse-engineered submission API. Single-achievement."
     },
     {
       "id": "single-ml-competition",
@@ -43,7 +43,7 @@
         "car-price-prediction-dsc-pjatk::approach",
         "car-price-prediction-dsc-pjatk::impact"
       ],
-      "notes": "Car-price DSC PJATK competition: XGBoost + Optuna + CatBoostEncoder, 7th of 30+ teams. Approach holds the Optuna search detail; impact has the rank + RMSE. Single-achievement."
+      "notes": "University data-science club regression competition: XGBoost + Optuna + CatBoostEncoder, top-quartile finish. Approach holds the Optuna search detail; impact has the rank + RMSE. Single-achievement."
     },
     {
       "id": "single-fullstack-fastapi",
@@ -54,7 +54,7 @@
         "hackyeah-2025-transport-tracker::approach",
         "hackyeah-2025-transport-tracker::impact"
       ],
-      "notes": "HackYeah 2025: FastAPI + Angular full stack, 24h delivery, Jury 4.3/5. Approach explains the architecture; impact the score + one-command bootstrap. Single-achievement."
+      "notes": "Hackathon submission: FastAPI + Angular full stack, 24h delivery, jury-rated. Approach explains the architecture; impact the score + one-command bootstrap. Single-achievement."
     },
     {
       "id": "cross-python-ml-pytorch",
@@ -67,7 +67,7 @@
         "car-price-prediction-dsc-pjatk::approach",
         "pjatk-data-science-club-membership::impact"
       ],
-      "notes": "Cross-cutting Python+PyTorch+ML hits multiple achievements: bus-punctuality (PyTorch NN reimplementation), engineering thesis (XGBoost/LightGBM time-series), car-price (XGBoost competition), and DSC PJATK membership which umbrellas Numerai PyTorch submissions. Approach sections carry the modelling detail."
+      "notes": "Cross-cutting Python+PyTorch+ML hits multiple achievements: bus-punctuality (PyTorch NN reimplementation), engineering thesis (XGBoost/LightGBM time-series), regression competition (XGBoost), and university data-science club membership which umbrellas additional PyTorch submissions. Approach sections carry the modelling detail."
     },
     {
       "id": "cross-rest-api-design",
@@ -79,7 +79,7 @@
         "hackyeah-2025-transport-tracker::approach",
         "jmi-flagship-project::approach"
       ],
-      "notes": "REST API design appears in three achievements: Red Ocean (production REST + Spring), HackYeah (FastAPI design), JMI flagship (FastAPI ingest endpoint). Approach is the natural section for design choices."
+      "notes": "REST API design appears in three achievements: single-employer Java project (production REST + Spring), hackathon submission (FastAPI design), JMI flagship (FastAPI ingest endpoint). Approach is the natural section for design choices."
     },
     {
       "id": "cross-data-engineering-postgres",
@@ -90,7 +90,7 @@
         "jmi-flagship-project::impact",
         "red-ocean-junior-java-developer::context"
       ],
-      "notes": "Postgres + pipeline + migrations is the JMI flagship; Red Ocean also runs on PostgreSQL but as a Spring/Hibernate app. Cross-cutting but skewed to JMI."
+      "notes": "Postgres + pipeline + migrations is the JMI flagship; the single-employer Java project also runs on PostgreSQL but as a Spring/Hibernate app. Cross-cutting but skewed to JMI."
     },
     {
       "id": "cross-quant-finance",
@@ -103,7 +103,7 @@
         "engineering-thesis-btc-signal-prediction::approach",
         "imc-prosperity-4-agentic-autoresearch::context"
       ],
-      "notes": "Volatility surface (options), engineering thesis (BTC time series), IMC Prosperity (trading). Quantfolio is also quant-adjacent but deliberately not included — it's a portfolio simulator in Java without a quant-modelling angle. Operator should reconsider if Quantfolio context belongs."
+      "notes": "Options-pricing project, engineering thesis (BTC time series), agentic trading competition. The Java portfolio simulator is also quant-adjacent but deliberately not included — it's a simulator without a quant-modelling angle. Operator should reconsider if simulator context belongs."
     },
     {
       "id": "cross-junior-java-oop",
@@ -115,7 +115,7 @@
         "railway-logistics-simulation::approach",
         "railway-logistics-simulation::impact"
       ],
-      "notes": "Three Java achievements: Red Ocean (production Spring), Quantfolio (JavaFX + design patterns), Railway (multithreaded + Dijkstra). Approach carries the design choices in each."
+      "notes": "Three Java achievements: single-employer backend project (production Spring), portfolio simulator (JavaFX + design patterns), logistics simulation (multithreaded + Dijkstra). Approach carries the design choices in each."
     },
     {
       "id": "pl-java-spring-backend",
@@ -149,7 +149,7 @@
         "jmi-flagship-project::approach",
         "jmi-flagship-project::context"
       ],
-      "notes": "Polish FastAPI/Python backend query — HackYeah (FastAPI + SQLite under time pressure) and JMI (FastAPI ingest + Postgres). Tests multilingual routing on a softer, less-keyword-dense query."
+      "notes": "Polish FastAPI/Python backend query — hackathon submission (FastAPI + SQLite under time pressure) and JMI (FastAPI ingest + Postgres). Tests multilingual routing on a softer, less-keyword-dense query."
     },
     {
       "id": "edge-vague-fast-learner",
@@ -174,7 +174,7 @@
         "engineering-thesis-btc-signal-prediction::approach",
         "volatility-surface-coding-jesus-feature::context"
       ],
-      "notes": "Edge case: 'trading bot' is genuinely ambiguous across IMC (live agentic trading), engineering thesis (BTC signal prediction — not strictly a bot but adjacent), and volatility surface (analytical, not a bot — but a hiring manager skimming might count it). Quantfolio is deliberately excluded — it's a simulator, not a bot. Operator should RECONSIDER whether volatility-surface::context belongs in the relevant set."
+      "notes": "Edge case: 'trading bot' is genuinely ambiguous across the agentic trading competition (live agentic trading), engineering thesis (BTC signal prediction — not strictly a bot but adjacent), and the options-pricing project (analytical, not a bot — but a hiring manager skimming might count it). The Java portfolio simulator is deliberately excluded — it's a simulator, not a bot. Operator should RECONSIDER whether the options-pricing context chunk belongs in the relevant set."
     }
   ]
 }
