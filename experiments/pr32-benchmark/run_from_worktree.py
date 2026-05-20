@@ -35,6 +35,7 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from uuid import UUID
 
 # ---------- minimal metrics (mirrors jmi.evaluation.retrieval_metrics) ----------
 
@@ -85,6 +86,11 @@ def build_resolver(session: Any) -> Any:
     by_id = {row[0]: row[1] for row in rows}
 
     def resolver(achievement_id: Any, chunk_index: int) -> str:
+        # Worktree A returns UUID; worktree B stores the achievement_id as a
+        # string in LangChain metadata. Coerce so both look the same to the
+        # by_id dict.
+        if not isinstance(achievement_id, UUID):
+            achievement_id = UUID(str(achievement_id))
         source_path = by_id[achievement_id]
         stem = Path(source_path).stem
         section = SECTION_ORDER[chunk_index]

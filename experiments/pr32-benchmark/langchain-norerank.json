@@ -7,7 +7,7 @@
   "k": 5,
   "seed_version": "1",
   "seed_file": "/Users/mateusz/Desktop/job-market-intelligence/.claude/worktrees/jmi-pr32-C/docs/ground_truth/rag_retrieval_seed.json",
-  "timestamp": "2026-05-20T16:08:49.371707+00:00",
+  "timestamp": "2026-05-20T16:54:22.417114+00:00",
   "per_query": [
     {
       "query_id": "single-java-backend",
@@ -17,10 +17,16 @@
         "red-ocean-junior-java-developer::approach",
         "red-ocean-junior-java-developer::impact"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "red-ocean-junior-java-developer::context",
+        "red-ocean-junior-java-developer::approach",
+        "jmi-flagship-project::approach",
+        "jmi-flagship-project::impact",
+        "red-ocean-junior-java-developer::lessons"
+      ],
+      "recall": 0.6666666666666666,
+      "mrr": 1.0,
+      "ndcg": 0.7653606369886217
     },
     {
       "query_id": "single-quant-options",
@@ -30,10 +36,16 @@
         "volatility-surface-coding-jesus-feature::approach",
         "volatility-surface-coding-jesus-feature::impact"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "volatility-surface-coding-jesus-feature::context",
+        "volatility-surface-coding-jesus-feature::approach",
+        "volatility-surface-coding-jesus-feature::lessons",
+        "engineering-thesis-btc-signal-prediction::context",
+        "volatility-surface-coding-jesus-feature::impact"
+      ],
+      "recall": 1.0,
+      "mrr": 1.0,
+      "ndcg": 0.9469024295259745
     },
     {
       "query_id": "single-llm-agent",
@@ -43,10 +55,16 @@
         "imc-prosperity-4-agentic-autoresearch::approach",
         "imc-prosperity-4-agentic-autoresearch::impact"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "imc-prosperity-4-agentic-autoresearch::approach",
+        "imc-prosperity-4-agentic-autoresearch::impact",
+        "imc-prosperity-4-agentic-autoresearch::lessons",
+        "jmi-flagship-project::approach",
+        "jmi-flagship-project::context"
+      ],
+      "recall": 0.6666666666666666,
+      "mrr": 1.0,
+      "ndcg": 0.7653606369886217
     },
     {
       "query_id": "single-ml-competition",
@@ -56,10 +74,16 @@
         "car-price-prediction-dsc-pjatk::approach",
         "car-price-prediction-dsc-pjatk::impact"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "engineering-thesis-btc-signal-prediction::approach",
+        "engineering-thesis-btc-signal-prediction::context",
+        "car-price-prediction-dsc-pjatk::approach",
+        "car-price-prediction-dsc-pjatk::lessons",
+        "jmi-flagship-project::approach"
+      ],
+      "recall": 0.3333333333333333,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.23463936301137822
     },
     {
       "query_id": "single-fullstack-fastapi",
@@ -69,10 +93,16 @@
         "hackyeah-2025-transport-tracker::approach",
         "hackyeah-2025-transport-tracker::impact"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "hackyeah-2025-transport-tracker::approach",
+        "jmi-flagship-project::approach",
+        "jmi-flagship-project::impact",
+        "jmi-flagship-project::context",
+        "red-ocean-junior-java-developer::impact"
+      ],
+      "recall": 0.3333333333333333,
+      "mrr": 1.0,
+      "ndcg": 0.46927872602275644
     },
     {
       "query_id": "cross-python-ml-pytorch",
@@ -84,10 +114,16 @@
         "car-price-prediction-dsc-pjatk::approach",
         "pjatk-data-science-club-membership::impact"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "jmi-flagship-project::impact",
+        "engineering-thesis-btc-signal-prediction::context",
+        "bus-punctuality-neural-network::approach",
+        "car-price-prediction-dsc-pjatk::approach",
+        "engineering-thesis-btc-signal-prediction::approach"
+      ],
+      "recall": 0.6,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.4468535299918563
     },
     {
       "query_id": "cross-rest-api-design",
@@ -98,10 +134,16 @@
         "hackyeah-2025-transport-tracker::approach",
         "jmi-flagship-project::approach"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "jmi-flagship-project::approach",
+        "hackyeah-2025-transport-tracker::approach",
+        "jmi-flagship-project::impact",
+        "red-ocean-junior-java-developer::impact",
+        "red-ocean-junior-java-developer::approach"
+      ],
+      "recall": 1.0,
+      "mrr": 1.0,
+      "ndcg": 0.9558295932317544
     },
     {
       "query_id": "cross-data-engineering-postgres",
@@ -111,10 +153,16 @@
         "jmi-flagship-project::impact",
         "red-ocean-junior-java-developer::context"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "red-ocean-junior-java-developer::approach",
+        "jmi-flagship-project::approach",
+        "car-price-prediction-dsc-pjatk::approach",
+        "jmi-flagship-project::impact",
+        "engineering-thesis-btc-signal-prediction::impact"
+      ],
+      "recall": 0.6666666666666666,
+      "mrr": 0.5,
+      "ndcg": 0.49818925746641285
     },
     {
       "query_id": "cross-quant-finance",
@@ -126,10 +174,16 @@
         "engineering-thesis-btc-signal-prediction::approach",
         "imc-prosperity-4-agentic-autoresearch::context"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "volatility-surface-coding-jesus-feature::context",
+        "quantfolio-javafx-portfolio-simulator::approach",
+        "volatility-surface-coding-jesus-feature::lessons",
+        "volatility-surface-coding-jesus-feature::approach",
+        "engineering-thesis-btc-signal-prediction::approach"
+      ],
+      "recall": 0.6,
+      "mrr": 1.0,
+      "ndcg": 0.6164336326286644
     },
     {
       "query_id": "cross-junior-java-oop",
@@ -140,10 +194,16 @@
         "railway-logistics-simulation::approach",
         "railway-logistics-simulation::impact"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "red-ocean-junior-java-developer::lessons",
+        "red-ocean-junior-java-developer::context",
+        "quantfolio-javafx-portfolio-simulator::approach",
+        "railway-logistics-simulation::context",
+        "red-ocean-junior-java-developer::approach"
+      ],
+      "recall": 0.5,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.34620964322385606
     },
     {
       "query_id": "pl-java-spring-backend",
@@ -153,10 +213,16 @@
         "red-ocean-junior-java-developer::approach",
         "red-ocean-junior-java-developer::impact"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "red-ocean-junior-java-developer::context",
+        "red-ocean-junior-java-developer::approach",
+        "red-ocean-junior-java-developer::lessons",
+        "jmi-flagship-project::impact",
+        "jmi-flagship-project::approach"
+      ],
+      "recall": 0.6666666666666666,
+      "mrr": 1.0,
+      "ndcg": 0.7653606369886217
     },
     {
       "query_id": "pl-ml-pytorch",
@@ -167,10 +233,16 @@
         "bus-punctuality-neural-network::impact",
         "engineering-thesis-btc-signal-prediction::approach"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "bus-punctuality-neural-network::lessons",
+        "bus-punctuality-neural-network::impact",
+        "car-price-prediction-dsc-pjatk::lessons",
+        "bus-punctuality-neural-network::context",
+        "pjatk-data-science-club-membership::approach"
+      ],
+      "recall": 0.5,
+      "mrr": 0.5,
+      "ndcg": 0.4144299250118475
     },
     {
       "query_id": "pl-junior-backend-python",
@@ -180,10 +252,16 @@
         "jmi-flagship-project::approach",
         "jmi-flagship-project::context"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "hackyeah-2025-transport-tracker::approach",
+        "red-ocean-junior-java-developer::context",
+        "jmi-flagship-project::impact",
+        "red-ocean-junior-java-developer::impact",
+        "jmi-flagship-project::approach"
+      ],
+      "recall": 0.6666666666666666,
+      "mrr": 1.0,
+      "ndcg": 0.6508205185601091
     },
     {
       "query_id": "edge-vague-fast-learner",
@@ -194,7 +272,13 @@
         "car-price-prediction-dsc-pjatk::lessons",
         "hackyeah-2025-transport-tracker::lessons"
       ],
-      "retrieved": [],
+      "retrieved": [
+        "red-ocean-junior-java-developer::lessons",
+        "engineering-thesis-btc-signal-prediction::context",
+        "jmi-flagship-project::approach",
+        "railway-logistics-simulation::context",
+        "bus-punctuality-neural-network::context"
+      ],
       "recall": 0.0,
       "mrr": 0.0,
       "ndcg": 0.0
@@ -209,15 +293,21 @@
         "engineering-thesis-btc-signal-prediction::approach",
         "volatility-surface-coding-jesus-feature::context"
       ],
-      "retrieved": [],
-      "recall": 0.0,
-      "mrr": 0.0,
-      "ndcg": 0.0
+      "retrieved": [
+        "imc-prosperity-4-agentic-autoresearch::impact",
+        "engineering-thesis-btc-signal-prediction::context",
+        "jmi-flagship-project::approach",
+        "imc-prosperity-4-agentic-autoresearch::approach",
+        "imc-prosperity-4-agentic-autoresearch::context"
+      ],
+      "recall": 0.6,
+      "mrr": 0.5,
+      "ndcg": 0.4912596920895758
     }
   ],
   "aggregate": {
-    "recall": 0.0,
-    "mrr": 0.0,
-    "ndcg": 0.0
+    "recall": 0.5866666666666666,
+    "mrr": 0.7,
+    "ndcg": 0.5577952147820034
   }
 }
