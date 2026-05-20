@@ -234,6 +234,61 @@ def ingest_achievements(
     )
 
 
+_ACHIEVEMENT_ID_OPTION = typer.Option(
+    None,
+    "--achievement-id",
+    help="UUID of a single achievement to (re-)embed. Repeat to embed several. "
+    "Default: embed every achievement in the database.",
+)
+
+
+@app.command("rag-embed")
+def rag_embed(
+    achievement_id: list[str] | None = _ACHIEVEMENT_ID_OPTION,
+) -> None:
+    """Chunk, embed, and persist achievement_embeddings (PR-3.2, T3).
+
+    Idempotent: every selected achievement's prior chunks are replaced.
+    """
+    from uuid import UUID
+
+    from sqlalchemy.exc import OperationalError
+
+    from jmi.db.base import get_session
+    from jmi.rag.embedding import CustomEmbedder
+    from jmi.rag.ingest import ingest_embeddings
+    from jmi.storage.achievement_embeddings import AchievementEmbeddingRepository
+    from jmi.storage.achievements import AchievementRepository
+
+    try:
+        ids: list[UUID] | None
+        if achievement_id:
+            try:
+                ids = [UUID(a) for a in achievement_id]
+            except ValueError as exc:
+                typer.echo(f"invalid --achievement-id UUID: {exc}", err=True)
+                raise typer.Exit(1) from exc
+        else:
+            ids = None
+        embedder = CustomEmbedder()
+        with get_session() as session:
+            stats = ingest_embeddings(
+                AchievementRepository(session),
+                AchievementEmbeddingRepository(session),
+                embedder,
+                achievement_ids=ids,
+            )
+    except OperationalError as exc:
+        typer.echo(_DB_UNREACHABLE_MSG, err=True)
+        raise typer.Exit(1) from exc
+
+    typer.echo(
+        f"{stats.achievements_processed} embedded, "
+        f"{stats.achievements_skipped} skipped, "
+        f"{stats.chunks_written} chunks written"
+    )
+
+
 @app.command("init-db")
 def init_db() -> None:
     """Upgrade the database schema to the latest Alembic head."""
