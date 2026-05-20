@@ -211,6 +211,35 @@ If JMI ever wants to swap to LangChain in a follow-up:
   in under a second. The morning operator should run that pass before
   quoting any number in the blog post.
 
+## Privacy and qualitative evaluation
+
+Smoke samples (five JD-driven generation runs per pipeline) were
+produced during the dual-builder sprint but are intentionally NOT
+committed to this public repository. The samples retrieved chunks
+from the operator's private career vault — a private GitHub repo
+containing real career history (employers, projects, accolades).
+Publishing those samples in a public artifact would leak personal
+data that the operator has chosen to keep private.
+
+The operator reviewed the samples qualitatively and reported high
+satisfaction with both pipelines' output: bullets stayed grounded in
+retrieved chunks, citations were correct, and Polish/English
+multilingual queries produced coherent generation. No systematic
+hallucination patterns were observed across the 10 samples in
+informal review.
+
+Formal grounded/partial/hallucinated labeling was deferred:
+  1. The corpus is small (10 samples; statistical power negligible).
+  2. The smoke samples themselves can't be shared as labeling
+     evidence in this repository.
+  3. Operator's qualitative pass is the more honest signal at this
+     scale than fabricated formal labels.
+
+Future PR-3.4 (the resume generator API/CLI) will exercise the
+pipeline on real JDs during operator's own job search, providing
+longitudinal qualitative evidence that does not require committing
+private career data.
+
 ## References
 
 - ADR-0015a — custom RAG implementation
