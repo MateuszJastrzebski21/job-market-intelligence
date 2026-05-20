@@ -19,6 +19,8 @@ from typing import TYPE_CHECKING
 import structlog
 from pydantic import BaseModel, ConfigDict
 
+from jmi.models.achievement import slugify
+
 if TYPE_CHECKING:
     from langchain_postgres import PGVectorStore
 
@@ -48,6 +50,34 @@ def _distance_to_score(distance: float) -> float:
     return 1.0 - float(distance)
 
 
+def _derive_chunk_id(metadata: dict[str, object]) -> str:
+    """Compute a stable chunk_id from the document's metadata.
+
+    Pattern B (PR-3.2 cross-worktree convention): chunk_id is
+    ``f"{title-slug}::{section}"``. PGVectorStore does NOT persist our
+    deterministic langchain_id UUID into the metadata dict (it stays on the
+    PK column only), so the previous lookup of ``metadata["langchain_id"]``
+    returned "" for every chunk and broke the rerank-recovery alignment in
+    pipeline.retrieve_top_k.
+
+    Slugging the title at query time keeps Worktree B's chunk_ids in the
+    same shape that Worktree A and Worktree C use for the retrieval ground-
+    truth seed.
+
+    Preserves backwards compatibility: if the metadata already carries a
+    ``langchain_id`` (e.g. tests that mock PGVectorStore behaviour), we
+    honour it; otherwise the synthetic ``slug::section`` form is used.
+    """
+    lid = metadata.get("langchain_id")
+    if lid:
+        return str(lid)
+    title = metadata.get("title")
+    section = metadata.get("section")
+    if title and section:
+        return f"{slugify(str(title))}::{section}"
+    return ""
+
+
 def retrieve(store: "PGVectorStore", query: str, k: int = 5) -> list[ScoredChunk]:
     """Retrieve top-K chunks for a query using PGVectorStore's similarity search.
 
@@ -61,7 +91,7 @@ def retrieve(store: "PGVectorStore", query: str, k: int = 5) -> list[ScoredChunk
         metadata = doc.metadata or {}
         results.append(
             ScoredChunk(
-                chunk_id=str(metadata.get("langchain_id", "")),
+                chunk_id=_derive_chunk_id(metadata),
                 achievement_id=str(metadata.get("achievement_id", "")),
                 chunk_index=int(metadata.get("chunk_index", -1)),
                 section=str(metadata.get("section", "unknown")),

@@ -20,6 +20,7 @@ from uuid import UUID, uuid5
 
 import structlog
 from langchain_postgres import PGEngine, PGVectorStore
+from sqlalchemy.exc import ProgrammingError
 
 from jmi.config import get_settings
 from jmi.models.achievement import Achievement
@@ -56,17 +57,26 @@ def get_pg_engine(database_url: str | None = None) -> PGEngine:
 def ensure_collection_table(engine: PGEngine) -> None:
     """Idempotently create the langchain_achievement_embeddings table.
 
-    Uses init_vectorstore_table with overwrite_existing=False so re-running is a
-    no-op when the table already exists. The schema is LangChain's default:
-    langchain_id (UUID PK), content (text), embedding (vector(384)),
+    `PGEngine.init_vectorstore_table(overwrite_existing=False)` *raises* on
+    duplicate (it does not mean "skip"), so for genuine idempotency we
+    catch DuplicateTable and treat it as success. The schema is LangChain's
+    default: langchain_id (UUID PK), content (text), embedding (vector(384)),
     langchain_metadata (JSONB) — the schema-ownership story ADR-0015b documents.
     """
-    engine.init_vectorstore_table(
-        table_name=COLLECTION_TABLE,
-        vector_size=EMBEDDING_DIM,
-        overwrite_existing=False,
-    )
-    log.info("rag.lc.collection.ready", table=COLLECTION_TABLE, dim=EMBEDDING_DIM)
+    try:
+        engine.init_vectorstore_table(
+            table_name=COLLECTION_TABLE,
+            vector_size=EMBEDDING_DIM,
+            overwrite_existing=False,
+        )
+        log.info("rag.lc.collection.ready", table=COLLECTION_TABLE, dim=EMBEDDING_DIM)
+    except ProgrammingError as exc:
+        # psycopg.errors.DuplicateTable wrapped by SQLAlchemy — already exists.
+        if "DuplicateTable" not in str(type(exc.orig).__name__) and "already exists" not in str(
+            exc.orig
+        ):
+            raise
+        log.info("rag.lc.collection.exists", table=COLLECTION_TABLE, dim=EMBEDDING_DIM)
 
 
 def get_vector_store(engine: PGEngine, embeddings: "Embeddings | None" = None) -> PGVectorStore:

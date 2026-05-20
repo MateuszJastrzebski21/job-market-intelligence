@@ -34,8 +34,12 @@ def get_embeddings() -> "Embeddings":
     """
     global _embeddings
     if _embeddings is None:
+        # HuggingFaceEmbeddings already owns `show_progress` — passing
+        # show_progress_bar via encode_kwargs collides with its own injection
+        # (TypeError "multiple values for keyword argument").
         _embeddings = HuggingFaceEmbeddings(
             model_name=EMBEDDING_MODEL_NAME,
-            encode_kwargs={"normalize_embeddings": True, "show_progress_bar": False},
+            encode_kwargs={"normalize_embeddings": True},
+            show_progress=False,
         )
     return _embeddings

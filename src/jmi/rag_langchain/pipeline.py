@@ -30,7 +30,7 @@ from jmi.rag_langchain.ingest import (
     get_vector_store,
 )
 from jmi.rag_langchain.reranking import compose_with_reranker, compose_without_reranker
-from jmi.rag_langchain.retrieval import ScoredChunk, retrieve
+from jmi.rag_langchain.retrieval import ScoredChunk, _derive_chunk_id, retrieve
 
 if TYPE_CHECKING:
     from langchain_postgres import PGVectorStore
@@ -87,7 +87,9 @@ class RagPipeline:
         by_chunk_id = {c.chunk_id: c for c in all_scored}
         out: list[ScoredChunk] = []
         for doc in rerank_docs:
-            chunk_id = str(doc.metadata.get("langchain_id", ""))
+            # Same Pattern-B derivation as retrieval._derive_chunk_id — keeps the
+            # alignment key consistent across the bi-encoder and the reranker.
+            chunk_id = _derive_chunk_id(doc.metadata or {})
             if chunk_id and chunk_id in by_chunk_id:
                 out.append(by_chunk_id[chunk_id])
         log.info("rag.lc.pipeline.retrieve", k=k, rerank=True, returned=len(out))
