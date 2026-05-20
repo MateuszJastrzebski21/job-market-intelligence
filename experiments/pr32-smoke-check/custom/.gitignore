@@ -1,4 +1,0 @@
-# Smoke-check outputs include full retrieved-chunk text — personal
-# achievement content from the operator's vault. H1/S-2: never commit body
-# text. Run ``run.py`` locally to regenerate; the operator labels in place.
-smoke-*.md
