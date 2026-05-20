@@ -1,0 +1,180 @@
+{
+  "version": "1",
+  "entries": [
+    {
+      "id": "single-java-backend",
+      "query": "Senior Java developer with Spring Framework, JPA/Hibernate, and PostgreSQL experience for an enterprise backend role.",
+      "query_language": "en",
+      "relevant_chunk_ids": [
+        "red-ocean-junior-java-developer::context",
+        "red-ocean-junior-java-developer::approach",
+        "red-ocean-junior-java-developer::impact"
+      ],
+      "notes": "Targets the Red Ocean role explicitly — Java 8 + Spring + JPA/Hibernate + Postgres. context/approach/impact carry the stack and production-defect-fix story. lessons is reflective and intentionally left out — recall@k punishes adding it only if the retriever doesn't return it. Single-achievement query."
+    },
+    {
+      "id": "single-quant-options",
+      "query": "Quantitative researcher with options pricing theory, implied volatility surface construction, and SciPy/NumPy numerical methods.",
+      "query_language": "en",
+      "relevant_chunk_ids": [
+        "volatility-surface-coding-jesus-feature::context",
+        "volatility-surface-coding-jesus-feature::approach",
+        "volatility-surface-coding-jesus-feature::impact"
+      ],
+      "notes": "Squarely the SPY volatility-surface project. Approach holds the numerical-methods detail (Newton iteration, no-arbitrage smoothing if present); impact holds the Coding Jesus feature. Single-achievement."
+    },
+    {
+      "id": "single-llm-agent",
+      "query": "LLM agent engineer building autonomous loops that iterate on their own outputs — Karpathy-style autoresearch, browser automation, agentic workflows.",
+      "query_language": "en",
+      "relevant_chunk_ids": [
+        "imc-prosperity-4-agentic-autoresearch::context",
+        "imc-prosperity-4-agentic-autoresearch::approach",
+        "imc-prosperity-4-agentic-autoresearch::impact"
+      ],
+      "notes": "IMC Prosperity 4 is the only achievement framed around an agentic loop. Approach is where the Karpathy-pattern adaptation lives; impact carries the PnL and the reverse-engineered submission API. Single-achievement."
+    },
+    {
+      "id": "single-ml-competition",
+      "query": "Applied ML engineer experienced with Kaggle-style competitions, gradient boosting, Bayesian hyperparameter optimization with Optuna, and feature engineering for regression problems.",
+      "query_language": "en",
+      "relevant_chunk_ids": [
+        "car-price-prediction-dsc-pjatk::context",
+        "car-price-prediction-dsc-pjatk::approach",
+        "car-price-prediction-dsc-pjatk::impact"
+      ],
+      "notes": "Car-price DSC PJATK competition: XGBoost + Optuna + CatBoostEncoder, 7th of 30+ teams. Approach holds the Optuna search detail; impact has the rank + RMSE. Single-achievement."
+    },
+    {
+      "id": "single-fullstack-fastapi",
+      "query": "Full-stack engineer for a hackathon-style sprint: FastAPI backend, Angular/TypeScript frontend, end-to-end shipping under time pressure.",
+      "query_language": "en",
+      "relevant_chunk_ids": [
+        "hackyeah-2025-transport-tracker::context",
+        "hackyeah-2025-transport-tracker::approach",
+        "hackyeah-2025-transport-tracker::impact"
+      ],
+      "notes": "HackYeah 2025: FastAPI + Angular full stack, 24h delivery, Jury 4.3/5. Approach explains the architecture; impact the score + one-command bootstrap. Single-achievement."
+    },
+    {
+      "id": "cross-python-ml-pytorch",
+      "query": "Python machine-learning engineer with hands-on PyTorch neural-network work and scikit-learn / boosting experience.",
+      "query_language": "en",
+      "relevant_chunk_ids": [
+        "bus-punctuality-neural-network::approach",
+        "bus-punctuality-neural-network::impact",
+        "engineering-thesis-btc-signal-prediction::approach",
+        "car-price-prediction-dsc-pjatk::approach",
+        "pjatk-data-science-club-membership::impact"
+      ],
+      "notes": "Cross-cutting Python+PyTorch+ML hits multiple achievements: bus-punctuality (PyTorch NN reimplementation), engineering thesis (XGBoost/LightGBM time-series), car-price (XGBoost competition), and DSC PJATK membership which umbrellas Numerai PyTorch submissions. Approach sections carry the modelling detail."
+    },
+    {
+      "id": "cross-rest-api-design",
+      "query": "Backend engineer with REST API design experience across production and prototype systems.",
+      "query_language": "en",
+      "relevant_chunk_ids": [
+        "red-ocean-junior-java-developer::approach",
+        "red-ocean-junior-java-developer::impact",
+        "hackyeah-2025-transport-tracker::approach",
+        "jmi-flagship-project::approach"
+      ],
+      "notes": "REST API design appears in three achievements: Red Ocean (production REST + Spring), HackYeah (FastAPI design), JMI flagship (FastAPI ingest endpoint). Approach is the natural section for design choices."
+    },
+    {
+      "id": "cross-data-engineering-postgres",
+      "query": "Data engineer who has built pipelines on PostgreSQL with schema migrations and structured logging.",
+      "query_language": "en",
+      "relevant_chunk_ids": [
+        "jmi-flagship-project::approach",
+        "jmi-flagship-project::impact",
+        "red-ocean-junior-java-developer::context"
+      ],
+      "notes": "Postgres + pipeline + migrations is the JMI flagship; Red Ocean also runs on PostgreSQL but as a Spring/Hibernate app. Cross-cutting but skewed to JMI."
+    },
+    {
+      "id": "cross-quant-finance",
+      "query": "Quantitative finance projects — options, derivatives, trading strategies, financial time-series modelling.",
+      "query_language": "en",
+      "relevant_chunk_ids": [
+        "volatility-surface-coding-jesus-feature::context",
+        "volatility-surface-coding-jesus-feature::approach",
+        "engineering-thesis-btc-signal-prediction::context",
+        "engineering-thesis-btc-signal-prediction::approach",
+        "imc-prosperity-4-agentic-autoresearch::context"
+      ],
+      "notes": "Volatility surface (options), engineering thesis (BTC time series), IMC Prosperity (trading). Quantfolio is also quant-adjacent but deliberately not included — it's a portfolio simulator in Java without a quant-modelling angle. Operator should reconsider if Quantfolio context belongs."
+    },
+    {
+      "id": "cross-junior-java-oop",
+      "query": "Junior Java developer with object-oriented design experience — Spring, threads, design patterns.",
+      "query_language": "en",
+      "relevant_chunk_ids": [
+        "red-ocean-junior-java-developer::approach",
+        "quantfolio-javafx-portfolio-simulator::approach",
+        "railway-logistics-simulation::approach",
+        "railway-logistics-simulation::impact"
+      ],
+      "notes": "Three Java achievements: Red Ocean (production Spring), Quantfolio (JavaFX + design patterns), Railway (multithreaded + Dijkstra). Approach carries the design choices in each."
+    },
+    {
+      "id": "pl-java-spring-backend",
+      "query": "Programista Java backend z doświadczeniem w Spring Framework, JPA/Hibernate i bazach danych PostgreSQL.",
+      "query_language": "pl",
+      "relevant_chunk_ids": [
+        "red-ocean-junior-java-developer::context",
+        "red-ocean-junior-java-developer::approach",
+        "red-ocean-junior-java-developer::impact"
+      ],
+      "notes": "Polish translation of the single-java-backend query; same relevance set. Tests worktree A's dual-embedding Polish-routing experiment — if multilingual-e5 routes correctly, recall should match the English version; English-only BGE should degrade on this query."
+    },
+    {
+      "id": "pl-ml-pytorch",
+      "query": "Inżynier uczenia maszynowego z doświadczeniem w PyTorch, sieciach neuronowych i reimplementacji modeli z publikacji naukowych.",
+      "query_language": "pl",
+      "relevant_chunk_ids": [
+        "bus-punctuality-neural-network::context",
+        "bus-punctuality-neural-network::approach",
+        "bus-punctuality-neural-network::impact",
+        "engineering-thesis-btc-signal-prediction::approach"
+      ],
+      "notes": "Polish ML query — bus-punctuality is the arXiv reimplementation, engineering thesis is the second ML project. Same dual-embedding test as pl-java-spring-backend."
+    },
+    {
+      "id": "pl-junior-backend-python",
+      "query": "Junior backend developer Python z FastAPI, projektowaniem REST API i pracą z bazami danych.",
+      "query_language": "pl",
+      "relevant_chunk_ids": [
+        "hackyeah-2025-transport-tracker::approach",
+        "jmi-flagship-project::approach",
+        "jmi-flagship-project::context"
+      ],
+      "notes": "Polish FastAPI/Python backend query — HackYeah (FastAPI + SQLite under time pressure) and JMI (FastAPI ingest + Postgres). Tests multilingual routing on a softer, less-keyword-dense query."
+    },
+    {
+      "id": "edge-vague-fast-learner",
+      "query": "Smart engineer who learns fast and ships things end-to-end.",
+      "query_language": "en",
+      "relevant_chunk_ids": [
+        "jmi-flagship-project::lessons",
+        "imc-prosperity-4-agentic-autoresearch::lessons",
+        "car-price-prediction-dsc-pjatk::lessons",
+        "hackyeah-2025-transport-tracker::lessons"
+      ],
+      "notes": "Edge case: deliberately vague phrasing. 'Learns fast' and 'ships end-to-end' are reflective claims that live in `## What I learned` sections, not technical sections. Most retrievers will struggle — this query exists to surface whether per-section chunking lets `lessons` chunks rank when the query is reflective rather than technical. Operator should RECONSIDER the relevance set: every `lessons` could be argued in. I picked the four where the operator's actual learning narrative most directly matches the query frame; the rest are borderline."
+    },
+    {
+      "id": "edge-ambiguous-trading-bot",
+      "query": "Trading bot developer.",
+      "query_language": "en",
+      "relevant_chunk_ids": [
+        "imc-prosperity-4-agentic-autoresearch::context",
+        "imc-prosperity-4-agentic-autoresearch::approach",
+        "engineering-thesis-btc-signal-prediction::context",
+        "engineering-thesis-btc-signal-prediction::approach",
+        "volatility-surface-coding-jesus-feature::context"
+      ],
+      "notes": "Edge case: 'trading bot' is genuinely ambiguous across IMC (live agentic trading), engineering thesis (BTC signal prediction — not strictly a bot but adjacent), and volatility surface (analytical, not a bot — but a hiring manager skimming might count it). Quantfolio is deliberately excluded — it's a simulator, not a bot. Operator should RECONSIDER whether volatility-surface::context belongs in the relevant set."
+    }
+  ]
+}
