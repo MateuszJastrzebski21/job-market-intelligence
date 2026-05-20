@@ -1,7 +1,11 @@
 from datetime import date
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import typer
+
+if TYPE_CHECKING:
+    from jmi.evaluation.benchmark import ScoredChunkAdapter
 
 from jmi.config import get_logging_settings, get_settings
 from jmi.logging import configure_logging
@@ -32,6 +36,21 @@ _VAULT_PATH_OPTION = typer.Option(
 )
 
 _DB_UNREACHABLE_MSG = "Cannot connect to database — is `docker compose up` running?"
+
+_RAG_SEED_OPTION = typer.Option(
+    Path("docs/ground_truth/rag_retrieval_seed.json"),
+    "--seed",
+    help="Retrieval ground-truth seed JSON file.",
+)
+
+_RAG_BENCHMARK_OUT_OPTION = typer.Option(
+    None,
+    "--out",
+    help=(
+        "Write the rendered markdown report to this path. "
+        "Default: experiments/pr32-benchmark/{pipeline}-rerank|norerank.md"
+    ),
+)
 
 
 @app.callback()
@@ -234,6 +253,99 @@ def ingest_achievements(
     )
 
 
+_ACHIEVEMENT_ID_OPTION = typer.Option(
+    None,
+    "--achievement-id",
+    help="UUID of a single achievement to (re-)embed. Repeat to embed several. "
+    "Default: embed every achievement in the database.",
+)
+
+
+@app.command("rag-embed")
+def rag_embed(
+    achievement_id: list[str] | None = _ACHIEVEMENT_ID_OPTION,
+) -> None:
+    """Chunk, embed, and persist achievement_embeddings (PR-3.2, T3).
+
+    Idempotent: every selected achievement's prior chunks are replaced.
+    """
+    from uuid import UUID
+
+    from sqlalchemy.exc import OperationalError
+
+    from jmi.db.base import get_session
+    from jmi.rag.embedding import CustomEmbedder
+    from jmi.rag.ingest import ingest_embeddings
+    from jmi.storage.achievement_embeddings import AchievementEmbeddingRepository
+    from jmi.storage.achievements import AchievementRepository
+
+    try:
+        ids: list[UUID] | None
+        if achievement_id:
+            try:
+                ids = [UUID(a) for a in achievement_id]
+            except ValueError as exc:
+                typer.echo(f"invalid --achievement-id UUID: {exc}", err=True)
+                raise typer.Exit(1) from exc
+        else:
+            ids = None
+        embedder = CustomEmbedder()
+        with get_session() as session:
+            stats = ingest_embeddings(
+                AchievementRepository(session),
+                AchievementEmbeddingRepository(session),
+                embedder,
+                achievement_ids=ids,
+            )
+    except OperationalError as exc:
+        typer.echo(_DB_UNREACHABLE_MSG, err=True)
+        raise typer.Exit(1) from exc
+
+    typer.echo(
+        f"{stats.achievements_processed} embedded, "
+        f"{stats.achievements_skipped} skipped, "
+        f"{stats.chunks_written} chunks written"
+    )
+
+
+@app.command("rag-query")
+def rag_query(
+    query: str = typer.Argument(..., help="Query text — typically a JD snippet or role."),
+    k: int = typer.Option(5, "--k", help="Top-K chunks to return after the final stage."),
+    no_rerank: bool = typer.Option(
+        False, "--no-rerank", help="Skip the cross-encoder reranker — embedding order only."
+    ),
+) -> None:
+    """Run the custom RAG pipeline and print the top-K chunks (PR-3.2, T6)."""
+    from sqlalchemy.exc import OperationalError
+
+    from jmi.db.base import get_session
+    from jmi.rag.embedding import CustomEmbedder
+    from jmi.rag.pipeline import RagPipeline
+    from jmi.rag.reranking import CustomReranker
+    from jmi.rag.retrieval import CustomRetriever
+
+    if k <= 0:
+        typer.echo("--k must be positive", err=True)
+        raise typer.Exit(1)
+
+    retriever = CustomRetriever(CustomEmbedder())
+    reranker = None if no_rerank else CustomReranker()
+    pipeline = RagPipeline(retriever, reranker)
+    try:
+        with get_session() as session:
+            results = pipeline.retrieve_top_k(session, query, k=k)
+    except OperationalError as exc:
+        typer.echo(_DB_UNREACHABLE_MSG, err=True)
+        raise typer.Exit(1) from exc
+
+    stage = "rerank" if pipeline.has_reranker else "bi-encoder"
+    typer.echo(f"top-{k} via {stage}:")
+    for i, c in enumerate(results, start=1):
+        first_line = c.chunk_text.splitlines()[0]
+        typer.echo(f"  {i}. score={c.score:.4f} | {first_line}")
+
+
 @app.command("init-db")
 def init_db() -> None:
     """Upgrade the database schema to the latest Alembic head."""
@@ -264,3 +376,135 @@ def serve(
         reload=reload,
         factory=True,
     )
+
+
+@app.command("rag-benchmark")
+def rag_benchmark(
+    pipeline: str = typer.Option(
+        "custom",
+        "--pipeline",
+        "-p",
+        help="Which RAG pipeline to benchmark: 'custom' (worktree A) or 'langchain' (worktree B).",
+    ),
+    rerank: bool = typer.Option(
+        True,
+        "--rerank/--no-rerank",
+        help="Enable the cross-encoder reranker. Default on.",
+    ),
+    k: int = typer.Option(5, "--k", help="top-K retrieved per query."),
+    seed: Path = _RAG_SEED_OPTION,
+    out: Path | None = _RAG_BENCHMARK_OUT_OPTION,
+) -> None:
+    """Score a RAG pipeline against the retrieval ground-truth seed.
+
+    Requires the chosen pipeline's modules to be importable in the current
+    worktree — `custom` needs `jmi.rag.pipeline` (worktree A's branch),
+    `langchain` needs `jmi.rag_langchain.pipeline` (worktree B's branch).
+    On worktree C alone the command exits with an explanatory error.
+    """
+    from sqlalchemy.exc import OperationalError
+
+    from jmi.db.base import get_session
+    from jmi.evaluation.benchmark import (
+        benchmark_pipeline,
+        format_benchmark_markdown,
+        make_chunk_id_resolver,
+    )
+    from jmi.evaluation.retrieval_seed import load_seed
+
+    if pipeline not in ("custom", "langchain"):
+        typer.echo(f"unknown --pipeline {pipeline!r}; expected 'custom' or 'langchain'", err=True)
+        raise typer.Exit(2)
+
+    seed_file = load_seed(seed)
+
+    try:
+        with get_session() as session:
+            resolver = make_chunk_id_resolver(session)
+            adapter = _build_pipeline_adapter(pipeline, rerank, session, resolver)
+            config = {"rerank": rerank, "pipeline": pipeline}
+            result = benchmark_pipeline(
+                adapter, seed_file, k=k, config=config, seed_file_path=str(seed)
+            )
+    except OperationalError as exc:
+        typer.echo(f"{_DB_UNREACHABLE_MSG} ({exc})", err=True)
+        raise typer.Exit(1) from exc
+
+    markdown = format_benchmark_markdown(result)
+    suffix = "rerank" if rerank else "norerank"
+    out_path = out or Path(f"experiments/pr32-benchmark/{pipeline}-{suffix}.md")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(markdown, encoding="utf-8")
+    typer.echo(
+        f"recall@{k}={result.recall.mean:.3f} mrr={result.mrr.mean:.3f} "
+        f"ndcg@{k}={result.ndcg.mean:.3f} -> wrote {out_path}"
+    )
+
+
+def _build_pipeline_adapter(
+    pipeline_name: str,
+    rerank: bool,
+    session: object,  # SQLAlchemy Session, kept opaque to avoid the import here
+    resolver: object,
+) -> "ScoredChunkAdapter":
+    """Import the requested pipeline lazily and wrap it in a `ScoredChunkAdapter`.
+
+    Imports go through ``importlib.import_module`` so this module stays
+    type-checkable on a branch that does not ship worktree A's or worktree
+    B's pipeline packages — mypy never sees the symbol names. The adapter
+    binds ``session`` for worktree A's session-injected interface; worktree
+    B's PGVectorStore-backed pipeline owns its own connection and ignores
+    it.
+    """
+    from collections.abc import Callable, Sequence
+    from importlib import import_module
+
+    from jmi.evaluation.benchmark import ScoredChunkAdapter, _ScoredChunkLike
+
+    name = f"{pipeline_name}-{'rerank' if rerank else 'norerank'}"
+
+    if pipeline_name == "custom":
+        try:
+            embedding_mod = import_module("jmi.rag.embedding")
+            retrieval_mod = import_module("jmi.rag.retrieval")
+            reranking_mod = import_module("jmi.rag.reranking")
+            pipeline_mod = import_module("jmi.rag.pipeline")
+        except ImportError as exc:
+            typer.echo(
+                "custom RAG modules not available on this branch — "
+                "switch to worktree A (feat/phase3-pr3.2-A) and retry. "
+                f"({exc})",
+                err=True,
+            )
+            raise typer.Exit(3) from exc
+        embedder = embedding_mod.CustomEmbedder()
+        retriever = retrieval_mod.CustomRetriever(embedder)
+        reranker = reranking_mod.CustomReranker() if rerank else None
+        rag = pipeline_mod.RagPipeline(retriever, reranker=reranker)
+
+        def retrieve_fn(query: str, k: int) -> Sequence[_ScoredChunkLike]:
+            return list(rag.retrieve_top_k(session, query, k=k))
+
+        rfn: Callable[[str, int], Sequence[_ScoredChunkLike]] = retrieve_fn
+        rsv: Callable[..., str] = resolver  # type: ignore[assignment]
+        return ScoredChunkAdapter(name, rfn, rsv)
+
+    # langchain
+    try:
+        lc_pipeline_mod = import_module("jmi.rag_langchain.pipeline")
+    except ImportError as exc:
+        typer.echo(
+            "langchain RAG modules not available on this branch — "
+            "switch to worktree B (feat/phase3-pr3.2-B) and retry. "
+            f"({exc})",
+            err=True,
+        )
+        raise typer.Exit(3) from exc
+    rag_lc = lc_pipeline_mod.RagPipeline()
+
+    def retrieve_fn_lc(query: str, k: int) -> Sequence[_ScoredChunkLike]:
+        return list(rag_lc.retrieve_top_k(query, k=k, rerank=rerank))
+
+    rfn_lc: Callable[[str, int], Sequence[_ScoredChunkLike]] = retrieve_fn_lc
+    rsv_lc: Callable[..., str] = resolver  # type: ignore[assignment]
+    return ScoredChunkAdapter(name, rfn_lc, rsv_lc)
