@@ -234,6 +234,99 @@ def ingest_achievements(
     )
 
 
+_ACHIEVEMENT_ID_OPTION = typer.Option(
+    None,
+    "--achievement-id",
+    help="UUID of a single achievement to (re-)embed. Repeat to embed several. "
+    "Default: embed every achievement in the database.",
+)
+
+
+@app.command("rag-embed")
+def rag_embed(
+    achievement_id: list[str] | None = _ACHIEVEMENT_ID_OPTION,
+) -> None:
+    """Chunk, embed, and persist achievement_embeddings (PR-3.2, T3).
+
+    Idempotent: every selected achievement's prior chunks are replaced.
+    """
+    from uuid import UUID
+
+    from sqlalchemy.exc import OperationalError
+
+    from jmi.db.base import get_session
+    from jmi.rag.embedding import CustomEmbedder
+    from jmi.rag.ingest import ingest_embeddings
+    from jmi.storage.achievement_embeddings import AchievementEmbeddingRepository
+    from jmi.storage.achievements import AchievementRepository
+
+    try:
+        ids: list[UUID] | None
+        if achievement_id:
+            try:
+                ids = [UUID(a) for a in achievement_id]
+            except ValueError as exc:
+                typer.echo(f"invalid --achievement-id UUID: {exc}", err=True)
+                raise typer.Exit(1) from exc
+        else:
+            ids = None
+        embedder = CustomEmbedder()
+        with get_session() as session:
+            stats = ingest_embeddings(
+                AchievementRepository(session),
+                AchievementEmbeddingRepository(session),
+                embedder,
+                achievement_ids=ids,
+            )
+    except OperationalError as exc:
+        typer.echo(_DB_UNREACHABLE_MSG, err=True)
+        raise typer.Exit(1) from exc
+
+    typer.echo(
+        f"{stats.achievements_processed} embedded, "
+        f"{stats.achievements_skipped} skipped, "
+        f"{stats.chunks_written} chunks written"
+    )
+
+
+@app.command("rag-query")
+def rag_query(
+    query: str = typer.Argument(..., help="Query text — typically a JD snippet or role."),
+    k: int = typer.Option(5, "--k", help="Top-K chunks to return after the final stage."),
+    no_rerank: bool = typer.Option(
+        False, "--no-rerank", help="Skip the cross-encoder reranker — embedding order only."
+    ),
+) -> None:
+    """Run the custom RAG pipeline and print the top-K chunks (PR-3.2, T6)."""
+    from sqlalchemy.exc import OperationalError
+
+    from jmi.db.base import get_session
+    from jmi.rag.embedding import CustomEmbedder
+    from jmi.rag.pipeline import RagPipeline
+    from jmi.rag.reranking import CustomReranker
+    from jmi.rag.retrieval import CustomRetriever
+
+    if k <= 0:
+        typer.echo("--k must be positive", err=True)
+        raise typer.Exit(1)
+
+    retriever = CustomRetriever(CustomEmbedder())
+    reranker = None if no_rerank else CustomReranker()
+    pipeline = RagPipeline(retriever, reranker)
+    try:
+        with get_session() as session:
+            results = pipeline.retrieve_top_k(session, query, k=k)
+    except OperationalError as exc:
+        typer.echo(_DB_UNREACHABLE_MSG, err=True)
+        raise typer.Exit(1) from exc
+
+    stage = "rerank" if pipeline.has_reranker else "bi-encoder"
+    typer.echo(f"top-{k} via {stage}:")
+    for i, c in enumerate(results, start=1):
+        first_line = c.chunk_text.splitlines()[0]
+        typer.echo(f"  {i}. score={c.score:.4f} | {first_line}")
+
+
 @app.command("init-db")
 def init_db() -> None:
     """Upgrade the database schema to the latest Alembic head."""
