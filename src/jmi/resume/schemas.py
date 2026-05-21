@@ -32,3 +32,36 @@ class JobDescription(BaseModel):
     location: str | None = None
     language: Literal["en", "pl", "other"]
     raw_url: str | None = None
+
+
+class ResumeBullet(BaseModel):
+    """One bullet of the tailored resume, with citations and metric flag.
+
+    ``chunk_ids`` are stringified UUIDs of ``achievement_embeddings.id`` PKs.
+    Validated post-hoc against the retrieved chunk set — see
+    ``jmi.resume.bullet_validator.validate_bullet``.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=False)
+
+    text: str = Field(min_length=1, max_length=280)
+    chunk_ids: list[str] = Field(min_length=1, max_length=3)
+    mapped_jd_requirement: str = Field(min_length=1, max_length=200)
+    contains_metric: bool
+    confidence: Literal["high", "medium", "low"]
+
+
+class BulletGenerationOutput(BaseModel):
+    """Wrapper for the structured-output target.
+
+    Anthropic's ``messages.parse(output_format=...)`` expects a single root
+    Pydantic model — a bare ``list[ResumeBullet]`` doesn't fit. The wrapper
+    also carries ``uncovered_requirements``: JD requirements the model could
+    not ground in any retrieved chunk and consciously refused to invent
+    bullets for.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=False)
+
+    bullets: list[ResumeBullet] = Field(min_length=1, max_length=10)
+    uncovered_requirements: list[str] = Field(default_factory=list)
