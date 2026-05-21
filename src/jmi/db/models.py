@@ -1,10 +1,11 @@
 from datetime import datetime
+from decimal import Decimal
 from typing import Any
 from uuid import UUID, uuid4
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import JSON, ForeignKey, String, UniqueConstraint
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import CHAR, JSON, ForeignKey, Numeric, SmallInteger, String, UniqueConstraint
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.dialects.postgresql import UUID as PgUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -116,3 +117,50 @@ class AchievementEmbeddingORM(Base):
     created_at: Mapped[datetime] = mapped_column(nullable=False)
 
     achievement: Mapped[AchievementORM] = relationship(back_populates="embeddings")
+
+
+class TailoredResumeORM(Base):
+    """Audit-trail row for one ``jmi generate-resume`` invocation (PR-3.4).
+
+    Standalone — no FKs into other tables. ``chunk_ids_used`` holds stringified
+    UUIDs referring to ``achievement_embeddings.id`` but is deliberately not a
+    foreign key so re-chunking the achievement vault does not cascade-migrate
+    historical rows.
+    """
+
+    __tablename__ = "tailored_resumes"
+
+    id: Mapped[UUID] = mapped_column(PgUUID(as_uuid=True), primary_key=True, default=uuid4)
+    created_at: Mapped[datetime] = mapped_column(nullable=False)
+    jd_hash: Mapped[str] = mapped_column(CHAR(64), nullable=False, index=True)
+    jd_text: Mapped[str] = mapped_column(nullable=False)
+    company_name: Mapped[str] = mapped_column(nullable=False)
+    company_domain: Mapped[str | None] = mapped_column(nullable=True)
+    role_title: Mapped[str | None] = mapped_column(nullable=True)
+    bullets_json: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False)
+    cover_letter: Mapped[str] = mapped_column(nullable=False)
+    cover_letter_meta: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    research_blob: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    chunk_ids_used: Mapped[list[str]] = mapped_column(ARRAY(String()), nullable=False)
+    cost_usd: Mapped[Decimal] = mapped_column(Numeric(10, 4), nullable=False)
+    total_tokens: Mapped[int] = mapped_column(nullable=False)
+    web_search_calls: Mapped[int] = mapped_column(SmallInteger, nullable=False, default=0)
+    generation_duration_ms: Mapped[int] = mapped_column(nullable=False)
+    model_versions: Mapped[dict[str, str]] = mapped_column(JSONB, nullable=False)
+
+
+class CompanyResearchCacheORM(Base):
+    """TTL-bounded cache of ``CompanyResearch`` payloads (PR-3.4).
+
+    Keyed by SHA256(normalised company_name + '|' + (domain or '')). TTL is
+    enforced application-side in the repo, not via a constraint, so the same
+    row can be served at different effective TTLs by different callers.
+    """
+
+    __tablename__ = "company_research_cache"
+
+    key: Mapped[str] = mapped_column(CHAR(64), primary_key=True)
+    company_name: Mapped[str] = mapped_column(nullable=False)
+    company_domain: Mapped[str | None] = mapped_column(nullable=True)
+    research_json: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    fetched_at: Mapped[datetime] = mapped_column(nullable=False, index=True)
