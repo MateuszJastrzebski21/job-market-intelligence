@@ -1,13 +1,15 @@
 """Root pytest conftest.
 
-Shared fixtures will land here in Week 2 alongside integration tests
-(testcontainers-driven Postgres + repository fixtures).
+The dummy ``DATABASE_URL`` survives for tests that construct ``Settings`` without
+needing a live database (CLI ``--help`` exercises, pure-function tests). Tests
+that need a real Postgres request the ``db_session`` fixture from
+``tests.fixtures.postgres`` (loaded via ``pytest_plugins`` below); that fixture
+overrides ``DATABASE_URL`` with the testcontainers URL and clears the cached
+``Settings`` / ``Engine`` singletons.
 """
 
 import os
 
-# Settings now requires DATABASE_URL — there is no default credential fallback
-# (#26). Tests never touch a real database, but constructing Settings (e.g. via
-# the `jmi` CLI callback exercised by CLI tests) still validates the field, so
-# provide a dummy value suite-wide. setdefault keeps any real value intact.
 os.environ.setdefault("DATABASE_URL", "postgresql+psycopg://test:test@localhost:5432/test")
+
+pytest_plugins = ["tests.fixtures.postgres"]
