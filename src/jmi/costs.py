@@ -43,6 +43,32 @@ MODEL_PRICING: Final[dict[str, _ModelPricing]] = {
 # Anthropic web_search server tool: $10 per 1,000 searches.
 WEB_SEARCH_FEE_USD: Final[float] = 0.010
 
+# Typical per-stage USD cost for the resume generator (dossier §7 + the
+# revised two-call research from PR-3.4b). Used by ``jmi generate-resume
+# --dry-run`` and ``--budget-usd`` to estimate cost BEFORE any API call.
+# Numbers are deliberately on the high side so the budget gate errs toward
+# caution; real generations usually come in 10-20% lower.
+TYPICAL_STAGE_COST_USD: Final[dict[str, float]] = {
+    "jd_parse": 0.011,
+    "research": 0.078,  # Call 1 (Opus + web_search) + Call 2 (Sonnet synthesis)
+    "bullets": 0.045,
+    "cover_letter": 0.033,
+}
+
+
+def estimate_generation_cost_usd(
+    *,
+    include_research: bool = True,
+    include_cover_letter: bool = True,
+) -> float:
+    """Rough USD estimate for one ``jmi generate-resume`` invocation."""
+    total = TYPICAL_STAGE_COST_USD["jd_parse"] + TYPICAL_STAGE_COST_USD["bullets"]
+    if include_research:
+        total += TYPICAL_STAGE_COST_USD["research"]
+    if include_cover_letter:
+        total += TYPICAL_STAGE_COST_USD["cover_letter"]
+    return round(total, 4)
+
 
 def estimate_cost(
     *,
