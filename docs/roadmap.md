@@ -62,13 +62,15 @@ markdown report.
 
 **Largest phase by complexity** — biggest risk + biggest portfolio payoff.
 
-**Sub-PRs (rough):**
+**Sub-PRs:**
 
-- PR-3.1: Achievement database schema + Obsidian/Markdown ingestion
-- PR-3.2: Custom RAG implementation (no LangChain) — chunking, embeddings, retrieval
-- PR-3.3: LangChain reimplementation for comparison (ADR documents tradeoffs)
-- PR-3.4: Tailored CV generator (prompt + Pydantic → markdown bullets)
-- PR-3.5: Cover letter generator
+- PR-3.1: Achievement database schema + Obsidian/Markdown ingestion — **DONE**
+- PR-3.2: Custom RAG implementation (no LangChain) — chunking, embeddings, retrieval — **DONE**
+- PR-3.3: LangChain reimplementation for comparison (ADR-0015 documents tradeoffs) — **DONE**
+- PR-3.4: Tailored resume generator + smart cover letter research agent — **DONE**
+  (bullets + cover letter + Anthropic web_search company research collapsed
+  into one PR; see [ADR-0016](adr/0016-resume-generator-and-research-agent.md))
+- PR-3.5: `jmi vault purge` + Polish-language output + `--batch` mode
 - PR-3.6: ATS-optimized PDF rendering (ReportLab or WeasyPrint)
 - PR-3.7: Evaluation framework for resume quality (LLM-as-judge + manual A/B)
 

@@ -165,6 +165,38 @@ uv run jmi analyze --output report
 uv run jmi serve
 ```
 
+### Resume generation (PR-3.4)
+
+Once achievements are ingested (`jmi ingest-achievements`) and embedded
+(`jmi rag-embed`), generate a tailored markdown resume + cover letter from
+a JD:
+
+```bash
+# Inline JD, English-language, with web research and a conversational tone
+uv run jmi generate-resume --jd-text "$(cat path/to/jd.txt)"
+
+# JD from file, output to a markdown file + full JSON audit
+uv run jmi generate-resume \
+    --jd-file path/to/jd.txt \
+    --output out/resume.md \
+    --json out/resume.json
+
+# Estimate cost before running (no API calls)
+uv run jmi generate-resume --jd-file path/to/jd.txt --dry-run
+
+# Skip the web_search research step (uses a generic-but-personalised opener)
+uv run jmi generate-resume --jd-file path/to/jd.txt --no-research
+
+# Cap spend at $0.20 per generation
+uv run jmi generate-resume --jd-file path/to/jd.txt --budget-usd 0.20
+```
+
+Typical cost: ~$0.17 per generation at list prices ($0.09 on a 7-day
+research cache hit). Every generation persists into `tailored_resumes`
+as an audit row. See
+[ADR-0016](docs/adr/0016-resume-generator-and-research-agent.md) for the
+ten architectural decisions behind it.
+
 Run `uv run jmi --help` for the full command list and `uv run pytest` for the
 backend test suite. The HITL Chrome extension lives in [`extension/`](extension/)
 and is loaded unpacked into Chrome.
@@ -189,7 +221,7 @@ proof of concept, and Phase 3 is in design.
 |---|---|---|
 | **1 — Ingestion** | Three ToS-clean sources → Postgres → LLM extraction | ~95% complete |
 | **2 — Analytics** | Embeddings, KMeans clustering, Markdown + HTML market report | PoC merged ([#20](https://github.com/MateuszJastrzebski21/job-market-intelligence/pull/20)) |
-| **3 — RAG résumé generator** | Retrieval over a personal achievement corpus → tailored CV bullets and cover letters | In design — constraints documented |
+| **3 — RAG résumé generator** | Retrieval over a personal achievement corpus → tailored CV bullets and cover letters | PR-3.1 through PR-3.4 merged; PDF + eval framework pending |
 | **4 — HITL apply agent** | Match scoring + form-fill, with a human approval gate on every submission | Planned |
 | **5 — Production / MLOps** | Deployment, scheduled ingestion, monitoring, cost tracking | Planned |
 
@@ -199,10 +231,12 @@ with prompt caching and token tracking. Phase 2's proof of concept added the fir
 downstream layer — embeddings, clustering, and a shareable market report — and its
 choices are recorded in [ADR-0011](docs/adr/0011-phase2-poc-choices.md).
 
-Currently designing Phase 3 (RAG-based personal résumé tailoring) per documented
-design constraints — see
-[`docs/phase3-design-constraints.md`](docs/phase3-design-constraints.md). The full
-phase plan and timeline live in [`docs/roadmap.md`](docs/roadmap.md).
+Phase 3 has shipped the resume generator end-to-end: achievement ingestion
+(PR-3.1), custom RAG pipeline (PR-3.2), LangChain comparison (PR-3.3), and
+the tailored resume + smart cover letter agent (PR-3.4 — see
+[ADR-0016](docs/adr/0016-resume-generator-and-research-agent.md)). PDF
+rendering and a resume-quality eval framework are the remaining pieces.
+The full phase plan and timeline live in [`docs/roadmap.md`](docs/roadmap.md).
 
 ## Engineering discipline
 

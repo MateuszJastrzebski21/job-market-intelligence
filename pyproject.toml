@@ -48,6 +48,7 @@ dev = [
     "pytest-cov>=7.1.0",
     "respx>=0.23.1",
     "ruff>=0.15.11",
+    "testcontainers[postgres]>=4.0",
     "types-pyyaml>=6",
 ]
 
@@ -82,5 +83,5 @@ strict = true
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["sklearn.*", "pgvector.*"]
+module = ["sklearn.*", "pgvector.*", "testcontainers.*"]
 ignore_missing_imports = true
