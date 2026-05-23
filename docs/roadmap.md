@@ -1,6 +1,6 @@
 # JMI Roadmap
 
-Last updated: 2026-05-18. Reviewed weekly. Updates via PR.
+Last updated: 2026-05-23. Reviewed weekly. Updates via PR.
 
 ## Compass
 
@@ -18,8 +18,8 @@ startup within 6-12 weeks of focused execution.
 
 - Phase 1: 95% done (3 portals: HF + JJIT + NFJ, all HITL/API ToS-clean)
 - Phase 2: PoC merged (PR #20) — embeddings + clustering + market report
-- Phase 3: next (RAG résumé generator) — design constraints documented
-  (`docs/phase3-design-constraints.md`); Phase 4-5: 0%
+- Phase 3: 100% DONE — 4 PRs merged (#63, #66, #67, #68); see Phase 3 section below
+- Phase 4-5: 0%
 - Tests: 117 pytest + 89 vitest = 206 green
 - Coverage: ~57 jobs ingested on PC, ~18 on Mac (per-machine DBs)
 - Velocity vs plan: 2x ahead
@@ -56,41 +56,22 @@ markdown report.
 - Multi-source enrichment (BulldogJob, Pracuj.pl per DEENUU1 idea)
 - Public GitHub Pages dashboard hosting
 
-### Phase 3: RAG Resume Generator (Week 7-10 plan, ~6-8 weeks realistic)
+### Phase 3 — RAG + Resume Generator
 
-**Goal:** Personal achievement RAG → tailored CV bullets + cover letters per offer.
+**Status: CORE COMPLETE (4 PRs merged 2026-05-19..21)**
 
-**Largest phase by complexity** — biggest risk + biggest portfolio payoff.
+Merged:
 
-**Sub-PRs:**
+- PR-3.1 #63 Achievement domain + Obsidian vault ingestion
+- PR-3.2 #66 Custom RAG (BGE + pgvector + reranker) + eval harness
+- PR-3.3 #67 LangChain RAG reimplementation + comparison ADR-0015b
+- PR-3.4 #68 Resume generator + smart cover letter agent (web_search)
 
-- PR-3.1: Achievement database schema + Obsidian/Markdown ingestion — **DONE**
-- PR-3.2: Custom RAG implementation (no LangChain) — chunking, embeddings, retrieval — **DONE**
-- PR-3.3: LangChain reimplementation for comparison (ADR-0015 documents tradeoffs) — **DONE**
-- PR-3.4: Tailored resume generator + smart cover letter research agent — **DONE**
-  (bullets + cover letter + Anthropic web_search company research collapsed
-  into one PR; see [ADR-0016](adr/0016-resume-generator-and-research-agent.md))
-- PR-3.5: `jmi vault purge` + Polish-language output + `--batch` mode
-- PR-3.6: ATS-optimized PDF rendering (ReportLab or WeasyPrint)
-- PR-3.7: Evaluation framework for resume quality (LLM-as-judge + manual A/B)
+Pending (post-MVP polish, non-blocking for Phase 4):
 
-**Prerequisites:**
-
-- Achievement database: 15-20 markdown files in personal Obsidian Career/ vault. User
-  writes these manually (NOT scrapped, NOT generated).
-- Examples needed: production work experience, a portfolio project, a quantitative or
-  analytical project, a competition entry, a community/club involvement
-- Eval ground truth: ~10 jobs with manually crafted "ideal CV" for measurement
-
-**Senior signals demonstrated:**
-
-- Custom RAG from scratch (depth understanding)
-- Framework comparison via ADR (tradeoffs articulation)
-- Evaluation rigor (resume quality measurable)
-- ATS optimization (production concerns)
-
-**Risk:** scope creep. Phase 3 is 4 weeks in plan, 6-8 realistic. Mitigation: ship
-PR-3.1 + 3.2 + 3.4 first as MVP, defer 3.3, 3.5, 3.6, 3.7.
+- PR-3.5 Vault purge + Polish output support
+- PR-3.6 ATS-optimized PDF export
+- PR-3.7 Resume evaluation framework (callback rate tracking)
 
 ### Phase 4: HITL Apply Agent (Week 11-13 plan, ~3-4 weeks)
 
@@ -135,6 +116,12 @@ every submit.
 
 **Note:** HITL portals (JJIT, NFJ) can't be auto-scheduled — they need user to load
 Chrome page. Phase 5 scheduling applies to HF API only + reminders for Polish portals.
+
+### Phase 6+: Labor Market Intelligence OS (research-only, post-Phase-5 Track 2)
+
+**Status:** research dossier produced; execution deferred to post-Phase-5 (Track 2 commercial).
+
+Aspirational scope — see `docs/research/phase-6-plus-sota-dossier.md` on the local research branch `research/phase-6-plus-sota-dossier`. The dossier itself is **not** on `main`; only this pointer is. No implementation commitment.
 
 ## Cross-phase strategic tracks
 
