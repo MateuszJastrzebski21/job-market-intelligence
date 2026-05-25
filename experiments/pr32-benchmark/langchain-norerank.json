@@ -6,7 +6,7 @@
   },
   "k": 5,
   "seed_version": "1",
-  "seed_file": "/Users/mateusz/Desktop/job-market-intelligence/.claude/worktrees/jmi-pr32-C/docs/ground_truth/rag_retrieval_seed.json",
+  "seed_file": "docs/ground_truth/rag_retrieval_seed.json",
   "timestamp": "2026-05-20T16:54:22.417114+00:00",
   "per_query": [
     {

@@ -3,7 +3,7 @@
 - **k:** 5
 - **n_queries:** 15
 - **seed_version:** 1
-- **seed_file:** `../jmi-pr32-C/docs/ground_truth/rag_retrieval_seed.json`
+- **seed_file:** `docs/ground_truth/rag_retrieval_seed.json`
 - **timestamp:** 2026-05-20T18:27:40.557724+00:00
 - **config:** `pipeline`=`langchain`, `rerank`=`True`
 

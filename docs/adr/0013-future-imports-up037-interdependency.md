@@ -14,7 +14,7 @@ from annotations it deems redundant, but a quoted forward reference is only
 redundant *while* the future-import is present.
 
 The coupling was learned the hard way. Splitting that work into separate
-commits — the rejected "Phase B" on the `chore/kuba-checklist` branch —
+commits — the rejected "Phase B" on the `chore/dev-tooling-checklist` branch —
 failed: the pre-commit `ruff check --fix` hook re-applied `UP037` to each
 intermediate commit and unquoted the annotations mid-sequence. The change
 shipped as one atomic commit (`1652a56`), whose message is the only prior
@@ -106,9 +106,9 @@ c. **Drop `--fix` from the pre-commit ruff hook.** Plus: the hook stops
 
 ## References
 
-- PR #57 (`chore: Kuba's dev tooling checklist`) — commit `1652a56` did the
+- PR #57 (`chore: dev tooling checklist`) — commit `1652a56` did the
   atomic removal; its message is the original record of this rationale.
-- The rejected "Phase B" split-commit attempt on branch `chore/kuba-checklist`
+- The rejected "Phase B" split-commit attempt on branch `chore/dev-tooling-checklist`
   — the evidence that motivated this convention.
 - `.pre-commit-config.yaml` — the `ruff check --fix` hook that races a split.
 - `pyproject.toml` `[tool.ruff.lint]` — selects the `UP` family, enabling `UP037`.
