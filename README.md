@@ -39,7 +39,7 @@ ingest ──▶ extract ──┬──▶ evaluate  (per-field scores vs label
 3. **Analyze.** sentence-transformer embeddings and KMeans clustering produce a Markdown and single-file HTML market report ([ADR-0011](docs/adr/0011-phase2-poc-choices.md)).
 4. **Generate.** Retrieval over a personal achievement corpus produces CV bullets and a cover letter tailored to a posting, at about $0.17 per generation ([ADR-0016](docs/adr/0016-resume-generator-and-research-agent.md)).
 
-Non-trivial decisions are written up as ADRs in [`docs/adr/`](docs/adr/) before the code. 117 pytest tests cover the backend and 89 vitest tests cover the extension. Both suites run in CI, along with ruff and strict mypy.
+Non-trivial decisions are written up as ADRs in [`docs/adr/`](docs/adr/) before the code. 471 pytest tests cover the backend and 46 vitest tests cover the extension. CI runs ruff and strict mypy on every push and pull request.
 
 ## Quick start
 
